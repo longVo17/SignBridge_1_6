@@ -8,7 +8,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
@@ -28,9 +27,9 @@ export const TranslationScreen = () => {
 
   if (!permission.granted) {
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <SafeAreaView style={styles.permissionSafe}>
-          <BlurView intensity={85} tint="light" style={styles.permissionCard}>
+          <View style={styles.permissionCard}>
             <Ionicons name="videocam-outline" size={56} color="#2DC7FF" style={{ marginBottom: SPACING.md }} />
             <Text style={styles.permissionTitle}>Camera Access Needed</Text>
             <Text style={styles.permissionMsg}>
@@ -41,7 +40,7 @@ export const TranslationScreen = () => {
                 <Text style={styles.grantButtonText}>Grant Permission</Text>
               </LinearGradient>
             </TouchableOpacity>
-          </BlurView>
+          </View>
         </SafeAreaView>
       </LinearGradient>
     );
@@ -59,9 +58,9 @@ export const TranslationScreen = () => {
           {/* Top Controls */}
           <Animatable.View animation="fadeInDown" delay={200} style={styles.topControls}>
             {/* Screen Title Pill */}
-            <BlurView intensity={75} tint="light" style={styles.titlePill}>
+            <View style={styles.titlePill}>
               <Text style={styles.titlePillText}>Live Translation</Text>
-            </BlurView>
+            </View>
 
             {/* Control Buttons */}
             <View style={styles.topButtonGroup}>
@@ -89,7 +88,7 @@ export const TranslationScreen = () => {
 
           {/* Translation Panel (Bottom) */}
           <Animatable.View animation="fadeInUpBig" duration={700} delay={200} style={styles.panelContainer}>
-            <BlurView intensity={85} tint="light" style={styles.panel}>
+            <View style={styles.panel}>
               {/* Status row */}
               <View style={styles.panelHeader}>
                 <View style={styles.statusRow}>
@@ -108,13 +107,13 @@ export const TranslationScreen = () => {
                   />
                 </TouchableOpacity>
               </View>
-
+ 
               {/* Result */}
               <View style={styles.resultBox}>
                 <Text style={styles.resultText}>Hello, how are you?</Text>
                 <Text style={styles.resultHint}>Make a sign to see the translation here.</Text>
               </View>
-
+ 
               {/* Action Buttons */}
               <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.actionChip} activeOpacity={0.8}>
@@ -140,7 +139,7 @@ export const TranslationScreen = () => {
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
-            </BlurView>
+            </View>
           </Animatable.View>
 
         </SafeAreaView>
@@ -173,7 +172,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   permissionEmoji: {
@@ -218,7 +218,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.pill,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   titlePillText: {
     ...TYPOGRAPHY.labelLarge,
@@ -269,13 +270,14 @@ const styles = StyleSheet.create({
   // Panel
   panelContainer: {
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.md,
+    paddingBottom: 110,
   },
   panel: {
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.6)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.glass,
   },
   panelHeader: {

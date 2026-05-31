@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -52,7 +51,7 @@ export default function FlashCardSummaryScreen() {
   const renderSignItem = ({ item, index }: { item: SignSummary; index: number }) => null;
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTL} />
       <View style={styles.blobBR} />
 
@@ -80,7 +79,7 @@ export default function FlashCardSummaryScreen() {
 
               {/* Circular chart */}
               <Animatable.View animation="zoomIn" duration={800} style={styles.chartWrapper}>
-                <BlurView intensity={70} tint="light" style={styles.glassCard}>
+                <View style={styles.glassCard}>
                   <View
                     style={[
                       styles.circle,
@@ -98,7 +97,7 @@ export default function FlashCardSummaryScreen() {
                       <Text style={styles.labelText}>Mastered</Text>
                     </View>
                   </View>
-                </BlurView>
+                </View>
               </Animatable.View>
 
               {/* Stats Row */}
@@ -230,7 +229,8 @@ const styles = StyleSheet.create({
   chartWrapper: { alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.lg },
   glassCard: {
     padding: SPACING.lg, borderRadius: BORDER_RADIUS.xl,
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.8)',
+    borderWidth: 1.5, borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.glass, overflow: 'hidden',
   },
   circle: {
@@ -252,8 +252,8 @@ const styles = StyleSheet.create({
   // Stats
   statsContainer: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.65)', borderRadius: BORDER_RADIUS.lg,
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.75)',
+    backgroundColor: '#ffffff', borderRadius: BORDER_RADIUS.lg,
+    borderWidth: 1.5, borderColor: 'rgba(45, 199, 255, 0.15)',
     paddingVertical: SPACING.md, marginBottom: SPACING.lg,
     ...SHADOWS.sm,
   },
@@ -270,8 +270,8 @@ const styles = StyleSheet.create({
 
   // Word lists
   wordListCard: {
-    backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: BORDER_RADIUS.lg,
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: '#ffffff', borderRadius: BORDER_RADIUS.lg,
+    borderWidth: 1.5, borderColor: 'rgba(45, 199, 255, 0.15)',
     overflow: 'hidden', marginBottom: SPACING.md,
     ...SHADOWS.sm,
   },

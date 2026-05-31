@@ -66,11 +66,11 @@ export const LessonScreen = () => {
   // Exit warn dialog
   const handleExit = useCallback(() => {
     Alert.alert(
-      "Thoát bài học?",
-      "Tiến độ của bạn sẽ không được lưu.",
+      "Exit Lesson?",
+      "Your progress will not be saved.",
       [
-        { text: "Hủy", style: "cancel" },
-        { text: "Đồng ý", style: "destructive", onPress: () => navigation.goBack() }
+        { text: "Cancel", style: "cancel" },
+        { text: "Exit", style: "destructive", onPress: () => navigation.goBack() }
       ]
     );
   }, [navigation]);
@@ -175,7 +175,7 @@ export const LessonScreen = () => {
   // ── Render: Loading ────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
@@ -185,7 +185,7 @@ export const LessonScreen = () => {
 
   if (lessons.length === 0) {
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <View style={styles.centered}>
           <Text style={styles.emptyText}>No lessons found.</Text>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backLink}>
@@ -199,7 +199,7 @@ export const LessonScreen = () => {
   const currentSign = signsMap[lessons[learnIndex]?.signId];
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTL} />
       <View style={styles.blobBR} />
 

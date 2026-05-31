@@ -4,7 +4,6 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { Sign } from '../../types/data.types';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS, TYPOGRAPHY } from '../../theme/theme';
 import { getVideoAsset } from '../../utils/videoMap';
@@ -57,7 +56,7 @@ const FlashCard: React.FC<FlashCardProps> = ({
         { opacity: fadeAnim, transform: [{ translateY: slideAnim }, { scale: scaleAnim }] },
       ]}
     >
-      <BlurView intensity={90} tint="light" style={styles.card}>
+      <View style={styles.card}>
 
         {/* ── Category + Difficulty row ─────────────────────── */}
         <View style={styles.topRow}>
@@ -86,7 +85,7 @@ const FlashCard: React.FC<FlashCardProps> = ({
           ) : (
             <View style={styles.noVideoBox}>
               <Ionicons name="videocam-off-outline" size={28} color={COLORS.textSecondary} />
-              <Text style={styles.noVideoText}>Video chưa có — sẽ cập nhật sớm</Text>
+              <Text style={styles.noVideoText}>No video found — coming soon</Text>
             </View>
           )}
         </View>
@@ -112,7 +111,7 @@ const FlashCard: React.FC<FlashCardProps> = ({
               color="#FFF"
             />
             <Text style={styles.doneBtnText}>
-              {isLast ? 'Hoàn thành — Vào Quiz 🧠' : 'Đã học xong! →'}
+              {isLast ? 'Completed — Start Quiz 🧠' : 'Done! Next →'}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -134,7 +133,7 @@ const FlashCard: React.FC<FlashCardProps> = ({
           )}
         </View>
 
-      </BlurView>
+      </View>
     </Animated.View>
   );
 };
@@ -164,7 +163,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: BORDER_RADIUS.xl,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     overflow: 'hidden',
   },
 

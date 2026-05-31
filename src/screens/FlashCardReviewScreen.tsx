@@ -14,7 +14,6 @@ import {
   Modal,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS, TYPOGRAPHY } from '../theme/theme';
@@ -74,7 +73,7 @@ export const FlashCardReviewScreen = () => {
 
   const borderTint = pan.x.interpolate({
     inputRange: [-120, 0, 120],
-    outputRange: ['rgba(239, 68, 68, 0.4)', 'rgba(255, 255, 255, 0.8)', 'rgba(34, 197, 94, 0.4)'],
+    outputRange: ['rgba(239, 68, 68, 0.4)', 'rgba(45, 199, 255, 0.15)', 'rgba(34, 197, 94, 0.4)'],
     extrapolate: 'clamp',
   });
 
@@ -349,7 +348,7 @@ export const FlashCardReviewScreen = () => {
   // ── Loading state ───────────────────────────────────────────
   if (loading) {
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
@@ -360,7 +359,7 @@ export const FlashCardReviewScreen = () => {
   // ── Empty state ─────────────────────────────────────────────
   if (allCards.length === 0 && !loading) {
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <SafeAreaView style={styles.centered}>
           <Ionicons name="layers-outline" size={48} color={COLORS.textSecondary} style={{ marginBottom: 12 }} />
           <Text style={styles.noCardsText}>No signs available in this lesson.</Text>
@@ -380,7 +379,7 @@ export const FlashCardReviewScreen = () => {
     const prevRate = savedProgress.completionRate;
 
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <View style={styles.blobTL} />
         <View style={styles.blobBR} />
         <SafeAreaView style={{ flex: 1 }}>
@@ -399,14 +398,14 @@ export const FlashCardReviewScreen = () => {
           <View style={styles.entryContent}>
             {/* Progress indicator */}
             <View style={styles.entryProgressCard}>
-              <BlurView intensity={70} tint="light" style={styles.entryProgressBlur}>
+              <View style={styles.entryProgressBlur}>
                 <Ionicons name="bookmark" size={28} color={COLORS.primary} style={{ marginBottom: 8 }} />
                 <Text style={styles.entryProgressTitle}>Previous Progress</Text>
                 <Text style={styles.entryProgressRate}>{prevRate}%</Text>
                 <Text style={styles.entryProgressSub}>
                   {prevMastered} mastered · {unmasteredCount} remaining
                 </Text>
-              </BlurView>
+              </View>
             </View>
 
             {/* Option buttons */}
@@ -459,7 +458,7 @@ export const FlashCardReviewScreen = () => {
   // ── Main review UI ──────────────────────────────────────────
   if (cards.length === 0) {
     return (
-      <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+      <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
         <SafeAreaView style={styles.centered}>
           <Text style={styles.noCardsText}>No cards to review.</Text>
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -477,7 +476,7 @@ export const FlashCardReviewScreen = () => {
   const cloudUrl = current.sign.videoURL || undefined;
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTL} />
       <View style={styles.blobBR} />
 
@@ -508,7 +507,7 @@ export const FlashCardReviewScreen = () => {
 
         {/* Counters */}
         <View style={styles.countersRow}>
-          <BlurView intensity={70} tint="light" style={styles.countersBlur}>
+          <View style={styles.countersBlur}>
             <View style={styles.counterBox}>
               <Ionicons name="help-circle" size={16} color="#64748B" style={{ marginRight: 4 }} />
               <Text style={styles.learningText}>
@@ -522,7 +521,7 @@ export const FlashCardReviewScreen = () => {
                 Mastered: <Text style={{ fontWeight: 'bold', color: '#16A34A' }}>{masteredCount}</Text>
               </Text>
             </View>
-          </BlurView>
+          </View>
         </View>
 
         {/* Card Area */}
@@ -542,7 +541,7 @@ export const FlashCardReviewScreen = () => {
             ]}
             {...panResponder.panHandlers}
           >
-            <BlurView intensity={80} tint="light" style={styles.cardBlur}>
+            <View style={styles.cardBlur}>
               {!isFlipped ? (
                 /* ──── FRONT FACE ──── */
                 <View style={styles.frontContent}>
@@ -606,7 +605,7 @@ export const FlashCardReviewScreen = () => {
                   </View>
                 </ScrollView>
               )}
-            </BlurView>
+            </View>
           </Animated.View>
         </View>
 
@@ -662,7 +661,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingVertical: 10, paddingHorizontal: SPACING.md,
     borderRadius: BORDER_RADIUS.pill, borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.85)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft, overflow: 'hidden',
   },
   counterBox: { flexDirection: 'row', alignItems: 'center', flex: 1, justifyContent: 'center' },
@@ -685,6 +685,7 @@ const styles = StyleSheet.create({
   cardBlur: {
     flex: 1, borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
+    backgroundColor: '#ffffff',
   },
 
   // Front face
@@ -774,7 +775,8 @@ const styles = StyleSheet.create({
   entryProgressBlur: {
     padding: SPACING.lg, alignItems: 'center',
     borderRadius: BORDER_RADIUS.xl, borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)', overflow: 'hidden',
+    borderColor: 'rgba(45, 199, 255, 0.15)', overflow: 'hidden',
+    backgroundColor: '#ffffff',
     ...SHADOWS.glass,
   },
   entryProgressTitle: {
@@ -806,7 +808,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     paddingVertical: 16, paddingHorizontal: SPACING.md,
     borderRadius: BORDER_RADIUS.lg, borderWidth: 1.5,
-    borderColor: 'rgba(45,199,255,0.25)', backgroundColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(45,199,255,0.25)', backgroundColor: '#ffffff',
   },
   entryOptionSecText: {
     ...TYPOGRAPHY.labelLarge, color: COLORS.text, fontSize: 15,

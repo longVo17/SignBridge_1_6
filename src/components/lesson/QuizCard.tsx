@@ -3,7 +3,6 @@ import {
   View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { Video, ResizeMode } from 'expo-av';
 import { Sign } from '../../types/data.types';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS, TYPOGRAPHY } from '../../theme/theme';
@@ -120,12 +119,12 @@ const QuizCard: React.FC<QuizCardProps> = ({
         ) : (
           <View style={styles.noVideo}>
             <Ionicons name="videocam-off-outline" size={40} color="rgba(0,0,0,0.3)" />
-            <Text style={styles.noVideoText}>Không có video động tác</Text>
+            <Text style={styles.noVideoText}>No looping gesture video found</Text>
           </View>
         )}
       </View>
 
-      <Text style={styles.promptText}>Chọn từ chính xác cho động tác trên:</Text>
+      <Text style={styles.promptText}>Select the correct word for the gesture above:</Text>
 
       {/* Answer Options stacked vertically for optimal mobile touch targets (Fitts' Law) */}
       <View style={styles.optionsContainer}>
@@ -161,7 +160,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
             color={answerState === 'correct' ? '#16A34A' : '#DC2626'} 
           />
           <Text style={[styles.feedbackText, { color: answerState === 'correct' ? '#16A34A' : '#DC2626' }]}>
-            {answerState === 'correct' ? 'Chính xác! Làm tốt lắm!' : `Sai rồi! Ký hiệu đúng là "${question.sign.title}"`}
+            {answerState === 'correct' ? 'Correct! Well done!' : `Wrong! The correct sign is "${question.sign.title}"`}
           </Text>
         </Animated.View>
       )}

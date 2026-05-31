@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
@@ -78,7 +77,7 @@ export const LearningPathScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTL} />
       <View style={styles.blobBR} />
 
@@ -90,15 +89,15 @@ export const LearningPathScreen = () => {
             <Text style={styles.subtitle}>{completedPathsCount} of {totalPaths} units completed</Text>
           </View>
           {/* XP Badge */}
-          <BlurView intensity={80} tint="light" style={styles.xpBadge}>
+          <View style={styles.xpBadge}>
             <Ionicons name="star" size={16} color="#2DC7FF" style={{ marginRight: 6 }} />
             <Text style={styles.xpText}>{progress?.totalXP || 0} XP</Text>
-          </BlurView>
+          </View>
         </Animatable.View>
 
         {/* Overall Progress */}
         <Animatable.View animation="fadeInUp" delay={100} style={styles.overallProgressWrapper}>
-          <BlurView intensity={85} tint="light" style={styles.overallProgressCard}>
+          <View style={styles.overallProgressCard}>
             <View style={styles.progressRow}>
               <Text style={styles.progressLabel}>Overall Completion</Text>
               <Text style={styles.progressPct}>{overallPct}%</Text>
@@ -111,7 +110,7 @@ export const LearningPathScreen = () => {
                 style={[styles.overallBarFill, { width: `${overallPct}%` }]}
               />
             </View>
-          </BlurView>
+          </View>
         </Animatable.View>
 
         {/* Level List */}
@@ -147,9 +146,7 @@ export const LearningPathScreen = () => {
               )}
 
               <View style={styles.levelCardTouch}>
-                <BlurView
-                  intensity={isLocked ? 60 : 85}
-                  tint="light"
+                <View
                   style={[styles.levelCard, isLocked && styles.levelCardLocked]}
                 >
                   {/* Row 1: Header Info of Card */}
@@ -241,7 +238,7 @@ export const LearningPathScreen = () => {
                       </TouchableOpacity>
                     </View>
                   )}
-                </BlurView>
+                </View>
               </View>
             </Animatable.View>
           )})}
@@ -298,7 +295,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.pill,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
   },
   xpText: {
     ...TYPOGRAPHY.labelLarge,
@@ -308,13 +306,17 @@ const styles = StyleSheet.create({
   overallProgressWrapper: {
     paddingHorizontal: SPACING.md,
     marginBottom: SPACING.md,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   overallProgressCard: {
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   progressRow: {
@@ -343,11 +345,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.xxl,
+    paddingBottom: 110,
     alignItems: 'center',
+    width: '100%',
   },
   levelWrapper: {
     width: '100%',
+    maxWidth: 600,
     alignItems: 'center',
     marginBottom: SPACING.md,
     position: 'relative',
@@ -373,7 +377,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.85)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
   },
   levelCardLocked: {
     opacity: 0.75,

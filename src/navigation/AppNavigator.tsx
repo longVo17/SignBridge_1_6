@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, createNavigationContainerRef, DefaultTheme } from '@react-navigation/native';
 import * as Notifications from 'expo-notifications';
 
 export const navigationRef = createNavigationContainerRef();
@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../theme/theme';
 
 // Firebase auth listener
-import { subscribeToAuthState } from '../services/auth.service';
+import { subscribeToAuthState, configureGoogleSignIn } from '../services/auth.service';
 import { useAuthStore } from '../store/authStore';
 import { AuthUser } from '../types/auth.types';
 import { notificationService } from '../services/notification.service';
@@ -35,6 +35,11 @@ import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Height of the floating tab bar + its bottom margin + extra breathing room
+export const TAB_BAR_HEIGHT = 54;
+export const TAB_BAR_BOTTOM = 10;
+export const TAB_BAR_TOTAL_HEIGHT = TAB_BAR_HEIGHT + TAB_BAR_BOTTOM + 6;
+
 function LoadingScreen() {
   return (
     <View style={styles.loading}>
@@ -56,20 +61,50 @@ function MainTabNavigator() {
           else if (route.name === 'Translate') iconName = focused ? 'scan' : 'scan-outline';
           else if (route.name === 'Dictionary') iconName = focused ? 'book' : 'book-outline';
           else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName} size={focused ? 20 : 18} color={color} />;
         },
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textSecondary,
+        tabBarInactiveTintColor: '#9CA3AF',
         tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.surfaceDim,
+          position: 'absolute',
+          bottom: TAB_BAR_BOTTOM,
+          left: 16,
+          right: 16,
+          height: TAB_BAR_HEIGHT,
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
           elevation: 10,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.1,
+          shadowRadius: 12,
+          paddingBottom: 0,
+          paddingTop: 0,
         },
-        tabBarLabelStyle: { fontFamily: 'Inter', fontSize: 12 },
+        tabBarBackground: () => (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#ffffff',
+              borderRadius: 24,
+              overflow: 'hidden',
+              borderWidth: 1.5,
+              borderColor: 'rgba(45, 199, 255, 0.15)',
+            }}
+          />
+        ),
+        tabBarItemStyle: {
+          paddingVertical: 2,
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'Inter',
+          fontSize: 8.5,
+          fontWeight: '600',
+          marginTop: 1,
+        },
+        tabBarIconStyle: {
+          marginTop: 2,
+        },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -87,6 +122,7 @@ export default function AppNavigator() {
 
   // Subscribe to Firebase auth state on app mount
   useEffect(() => {
+    configureGoogleSignIn();
     const unsubscribe = subscribeToAuthState((firebaseUser) => {
       if (firebaseUser) {
         const authUser: AuthUser = {
@@ -126,8 +162,16 @@ export default function AppNavigator() {
   // Show spinner while Firebase checks persisted session
   if (status === 'loading') return <LoadingScreen />;
 
+  const MyTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: '#F9F9F9',
+    },
+  };
+
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} theme={MyTheme}>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
         {status === 'authenticated' ? (
           // Authenticated routes

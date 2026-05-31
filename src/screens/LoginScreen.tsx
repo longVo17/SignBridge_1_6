@@ -21,7 +21,7 @@ import { useAuth } from '../hooks/useAuth';
 type Mode = 'login' | 'register';
 
 export default function LoginScreen() {
-  const { login, register, loading, error, clearError } = useAuth();
+  const { login, register, loading, error, clearError, loginWithGoogle } = useAuth();
 
   const [mode, setMode] = useState<Mode>('login');
   const [displayName, setDisplayName] = useState('');
@@ -59,7 +59,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FFFFFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       {/* Decorative blobs */}
       <View style={styles.blobTopRight} />
       <View style={styles.blobBottomLeft} />
@@ -199,6 +199,32 @@ export default function LoginScreen() {
                       </>
                     )}
                   </LinearGradient>
+                </TouchableOpacity>
+
+                {/* OR divider */}
+                <View style={styles.dividerRow}>
+                  <View style={styles.dividerLine} />
+                  <Text style={styles.dividerText}>OR</Text>
+                  <View style={styles.dividerLine} />
+                </View>
+
+                {/* Google Sign In Button */}
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={async () => {
+                    try {
+                      await loginWithGoogle();
+                    } catch (e: any) {
+                      Alert.alert('Google Sign In Error', e.message);
+                    }
+                  }}
+                  disabled={loading}
+                  style={styles.googleButton}
+                >
+                  <View style={styles.googleIconContainer}>
+                    <Ionicons name="logo-google" size={20} color="#EA4335" />
+                  </View>
+                  <Text style={styles.googleButtonText}>Continue with Google</Text>
                 </TouchableOpacity>
 
                 {/* Toggle mode */}
@@ -348,6 +374,54 @@ const styles = StyleSheet.create({
   toggleLink: {
     ...TYPOGRAPHY.labelLarge,
     color: COLORS.primary,
+    fontWeight: 'bold',
+  },
+
+  // Divider
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: SPACING.md,
+    opacity: 0.6,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.border,
+  },
+  dividerText: {
+    ...TYPOGRAPHY.labelMedium,
+    color: COLORS.textSecondary,
+    paddingHorizontal: SPACING.sm,
+    fontWeight: '600',
+    fontSize: 12,
+  },
+
+  // Google button
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: BORDER_RADIUS.pill,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    paddingVertical: 14,
+    minHeight: 52,
+    ...SHADOWS.glass,
+    marginBottom: SPACING.sm,
+  },
+  googleIconContainer: {
+    marginRight: 10,
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleButtonText: {
+    ...TYPOGRAPHY.labelLarge,
+    color: '#334155',
+    fontSize: 15,
     fontWeight: 'bold',
   },
 });

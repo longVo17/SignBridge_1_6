@@ -10,7 +10,6 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { useAuthStore } from '../store/authStore';
@@ -75,7 +74,7 @@ export default function HomeScreen({ navigation }: any) {
 
   return (
     <LinearGradient
-      colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']}
+      colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']}
       style={styles.container}
     >
       {/* Decorative blobs */}
@@ -106,9 +105,9 @@ export default function HomeScreen({ navigation }: any) {
               onPress={() => navigation.navigate('Notifications')}
               activeOpacity={0.7}
             >
-              <BlurView intensity={75} tint="light" style={styles.bellBlur}>
+              <View style={styles.bellBlur}>
                 <Ionicons name="notifications-outline" size={20} color={COLORS.primary} />
-              </BlurView>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -140,10 +139,10 @@ export default function HomeScreen({ navigation }: any) {
                     onPress={() => navigation.navigate('Learn')}
                     activeOpacity={0.85}
                   >
-                    <BlurView intensity={80} tint="light" style={styles.reviewBlur}>
+                    <View style={styles.reviewBlur}>
                       <Ionicons name="repeat" size={14} color={COLORS.primary} style={{ marginRight: 6 }} />
                       <Text style={styles.reviewBadgeText}>{translateTitle(path.title)}</Text>
-                    </BlurView>
+                    </View>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -152,7 +151,7 @@ export default function HomeScreen({ navigation }: any) {
 
           {/* Progress Card */}
           <Animatable.View animation="fadeInUp" delay={150}>
-            <BlurView intensity={85} tint="light" style={styles.progressCard}>
+            <View style={styles.progressCard}>
               <View style={styles.progressCardInner}>
                 <View style={styles.progressTop}>
                   <View style={{ flex: 1 }}>
@@ -187,7 +186,7 @@ export default function HomeScreen({ navigation }: any) {
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
-            </BlurView>
+            </View>
           </Animatable.View>
 
           {/* Quick Actions */}
@@ -206,12 +205,12 @@ export default function HomeScreen({ navigation }: any) {
                     activeOpacity={0.85}
                     onPress={() => navigation.navigate(action.screen)}
                   >
-                    <BlurView intensity={70} tint="light" style={styles.actionBlur}>
+                    <View style={styles.actionBlur}>
                       <View style={[styles.actionIconCircle, { backgroundColor: action.bg }]}>
                         <Ionicons name={action.icon} size={26} color={action.color} />
                       </View>
                       <Text style={styles.actionLabel}>{action.label}</Text>
-                    </BlurView>
+                    </View>
                   </TouchableOpacity>
                 </Animatable.View>
               ))}
@@ -219,7 +218,7 @@ export default function HomeScreen({ navigation }: any) {
           </Animatable.View>
 
           {/* Daily Signs */}
-          <Animatable.View animation="fadeInUp" delay={500}>
+          <Animatable.View animation="fadeInUp" delay={500} style={{ width: '100%', maxWidth: 600, alignSelf: 'center' }}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Daily Signs</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Dictionary')}>
@@ -234,13 +233,13 @@ export default function HomeScreen({ navigation }: any) {
                     activeOpacity={0.85}
                     onPress={() => navigation.navigate('Dictionary')}
                   >
-                    <BlurView intensity={80} tint="light" style={styles.signBlur}>
+                    <View style={styles.signBlur}>
                       <Ionicons name={sign.iconName} size={40} color="#2DC7FF" style={{ marginBottom: SPACING.sm }} />
                       <Text style={styles.signWord}>{sign.word}</Text>
                       <View style={styles.signCategoryBadge}>
                         <Text style={styles.signCategoryText}>{sign.category}</Text>
                       </View>
-                    </BlurView>
+                    </View>
                   </TouchableOpacity>
                 </Animatable.View>
               ))}
@@ -276,7 +275,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.xxl,
+    paddingTop: SPACING.sm,
+    paddingBottom: 110,
   },
   header: {
     flexDirection: 'row',
@@ -284,6 +284,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: SPACING.md,
     marginBottom: SPACING.md,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   greeting: {
     ...TYPOGRAPHY.bodyLarge,
@@ -319,6 +322,8 @@ const styles = StyleSheet.create({
   reviewSection: {
     marginBottom: SPACING.md,
     width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   reviewTitle: {
     ...TYPOGRAPHY.labelSmall,
@@ -342,7 +347,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.85)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
+    borderRadius: BORDER_RADIUS.pill,
   },
   reviewBadgeText: {
     ...TYPOGRAPHY.labelSmall,
@@ -357,8 +364,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: SPACING.xl,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.glass,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   progressCardInner: {
     padding: SPACING.lg,
@@ -431,6 +442,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: SPACING.md,
     marginBottom: SPACING.md,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   seeAll: {
     ...TYPOGRAPHY.labelLarge,
@@ -444,6 +458,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginHorizontal: -SPACING.xs / 2,
     marginBottom: SPACING.sm,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
   },
   actionCardWrapper: {
     width: '50%',
@@ -459,7 +476,8 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
   },
@@ -486,10 +504,11 @@ const styles = StyleSheet.create({
     ...SHADOWS.soft,
   },
   signBlur: {
-    padding: SPACING.md,
+    padding: 12,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
   },
@@ -501,7 +520,7 @@ const styles = StyleSheet.create({
   },
   signCategoryBadge: {
     backgroundColor: 'rgba(45,199,255,0.12)',
-    paddingHorizontal: SPACING.sm,
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: BORDER_RADIUS.pill,
   },
@@ -524,5 +543,9 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: 'rgba(45, 199, 255, 0.15)',
   },
 });

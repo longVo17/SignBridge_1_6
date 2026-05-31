@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { signInWithEmail, signUpWithEmail, signOut } from '../services/auth.service';
+import { signInWithEmail, signUpWithEmail, signOut, signInWithGoogle } from '../services/auth.service';
 import { useAuthStore } from '../store/authStore';
 
 export const useAuth = () => {
@@ -41,7 +41,19 @@ export const useAuth = () => {
     }
   };
 
-  return { user, status, loading, error, login, register, logout, clearError: () => setError(null) };
+  const loginWithGoogle = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Đăng nhập Google thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { user, status, loading, error, login, register, logout, loginWithGoogle, clearError: () => setError(null) };
 };
 
 // Map Firebase error codes → user-friendly Vietnamese messages

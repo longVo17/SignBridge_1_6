@@ -8,7 +8,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/theme';
@@ -25,7 +24,7 @@ export default function LessonSummaryScreen({ route, navigation }: any) {
   const showLeft = percentage >= 75;
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTL} />
       <View style={styles.blobBR} />
 
@@ -41,7 +40,7 @@ export default function LessonSummaryScreen({ route, navigation }: any) {
 
           {/* Calculated Segment Circular Chart (Pure Native calculated border-radius paths) */}
           <Animatable.View animation="zoomIn" duration={800} style={styles.chartWrapper}>
-            <BlurView intensity={70} tint="light" style={styles.glassCard}>
+            <View style={styles.glassCard}>
               <View style={[
                 styles.circle,
                 {
@@ -57,7 +56,7 @@ export default function LessonSummaryScreen({ route, navigation }: any) {
                   <Text style={styles.labelText}>Mastered</Text>
                 </View>
               </View>
-            </BlurView>
+            </View>
           </Animatable.View>
 
           {/* Stats Description */}
@@ -144,7 +143,8 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
     borderRadius: BORDER_RADIUS.xl,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.glass,
     overflow: 'hidden',
   },
@@ -180,10 +180,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.65)',
+    backgroundColor: '#ffffff',
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
     paddingVertical: SPACING.md,
     ...SHADOWS.sm,
   },

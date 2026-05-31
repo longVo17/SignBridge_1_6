@@ -10,7 +10,6 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/theme';
 
@@ -51,7 +50,7 @@ export default function HelpSupportScreen({ navigation }: any) {
   };
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={styles.header}>
@@ -69,7 +68,7 @@ export default function HelpSupportScreen({ navigation }: any) {
 
           {/* Contact channels */}
           <View style={styles.supportCardContainer}>
-            <BlurView intensity={85} tint="light" style={styles.supportCard}>
+            <View style={styles.supportCard}>
               <View style={styles.supportIconBg}>
                 <Ionicons name="chatbubbles-outline" size={28} color={COLORS.primary} />
               </View>
@@ -83,7 +82,7 @@ export default function HelpSupportScreen({ navigation }: any) {
                   <Text style={styles.emailBtnText}>Email Engineering</Text>
                 </LinearGradient>
               </TouchableOpacity>
-            </BlurView>
+            </View>
           </View>
 
           {/* FAQs section */}
@@ -93,7 +92,7 @@ export default function HelpSupportScreen({ navigation }: any) {
             {FAQS.map((faq, idx) => {
               const active = activeFaq === idx;
               return (
-                <BlurView key={idx} intensity={active ? 85 : 60} tint="light" style={styles.faqCard}>
+                <View key={idx} style={[styles.faqCard, { backgroundColor: active ? '#ffffff' : 'rgba(255,255,255,0.9)' }]}>
                   <TouchableOpacity 
                     style={styles.faqHeader} 
                     onPress={() => toggleFaq(idx)} 
@@ -112,7 +111,7 @@ export default function HelpSupportScreen({ navigation }: any) {
                       <Text style={styles.faqAnswer}>{faq.answer}</Text>
                     </View>
                   )}
-                </BlurView>
+                </View>
               );
             })}
           </View>
@@ -164,7 +163,8 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
   },
   supportIconBg: {
     width: 56,
@@ -221,8 +221,9 @@ const styles = StyleSheet.create({
   faqCard: {
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
     overflow: 'hidden',
+    backgroundColor: '#ffffff',
   },
   faqHeader: {
     flexDirection: 'row',

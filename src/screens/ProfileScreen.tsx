@@ -14,7 +14,6 @@ import {
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { useAuthStore } from '../store/authStore';
@@ -225,7 +224,7 @@ export default function ProfileScreen({ navigation }: any) {
   const activeQuizData = hasQuizzes ? quizEntries : mockQuizEntries;
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTop} />
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -274,7 +273,7 @@ export default function ProfileScreen({ navigation }: any) {
 
           {/* Real-time statistics section with vector icons */}
           <Animatable.View animation="fadeInUp" delay={150} style={styles.statsWrapper}>
-            <BlurView intensity={85} tint="light" style={styles.statsCard}>
+            <View style={styles.statsCard}>
               {[
                 { label: 'Lessons', value: (progress?.completedLessons?.length || 0).toString(), iconName: 'book-outline' as const, color: '#2DC7FF' },
                 { label: 'Day Streak', value: (progress?.streakDays || 0).toString(), iconName: 'flame-outline' as const, color: '#F97316' },
@@ -286,7 +285,7 @@ export default function ProfileScreen({ navigation }: any) {
                   <Text style={styles.statLabel}>{stat.label}</Text>
                 </View>
               ))}
-            </BlurView>
+            </View>
           </Animatable.View>
 
           {/* Achievements list */}
@@ -296,7 +295,7 @@ export default function ProfileScreen({ navigation }: any) {
               {achievements.map((ach, index) => (
                 <Animatable.View key={ach.id} animation="zoomIn" delay={250 + index * 80}>
                   <View style={[styles.achievementCard, !ach.earned && styles.achievementLocked]}>
-                    <BlurView intensity={80} tint="light" style={styles.achievementBlur}>
+                    <View style={styles.achievementBlur}>
                       <View style={[styles.achievementIconBg, { backgroundColor: ach.earned ? 'rgba(45,199,255,0.12)' : 'rgba(100,100,100,0.06)' }]}>
                         <Ionicons
                           name={ach.iconName}
@@ -307,7 +306,7 @@ export default function ProfileScreen({ navigation }: any) {
                       <Text style={[styles.achievementLabel, !ach.earned && { color: COLORS.textSecondary }]}>
                         {ach.label}
                       </Text>
-                    </BlurView>
+                    </View>
                   </View>
                 </Animatable.View>
               ))}
@@ -332,7 +331,7 @@ export default function ProfileScreen({ navigation }: any) {
                       })
                     }
                   >
-                    <BlurView intensity={85} tint="light" style={styles.resumeCardBlur}>
+                    <View style={styles.resumeCardBlur}>
                       <View style={styles.resumeCardHeader}>
                         <View style={[styles.resumeIconBg, { backgroundColor: 'rgba(45,199,255,0.12)' }]}>
                           <Ionicons name="book" size={20} color={COLORS.primary} />
@@ -359,7 +358,7 @@ export default function ProfileScreen({ navigation }: any) {
                         <Text style={styles.resumeActionText}>Continue Lesson</Text>
                         <Ionicons name="arrow-forward" size={14} color={COLORS.primary} />
                       </View>
-                    </BlurView>
+                    </View>
                   </TouchableOpacity>
                 )}
 
@@ -377,7 +376,7 @@ export default function ProfileScreen({ navigation }: any) {
                       })
                     }
                   >
-                    <BlurView intensity={85} tint="light" style={styles.resumeCardBlur}>
+                    <View style={styles.resumeCardBlur}>
                       <View style={styles.resumeCardHeader}>
                         <View style={[styles.resumeIconBg, { backgroundColor: 'rgba(245,158,11,0.12)' }]}>
                           <Ionicons name="layers" size={20} color="#F59E0B" />
@@ -407,7 +406,7 @@ export default function ProfileScreen({ navigation }: any) {
                         <Text style={[styles.resumeActionText, { color: '#D97706' }]}>Resume Review</Text>
                         <Ionicons name="arrow-forward" size={14} color="#D97706" />
                       </View>
-                    </BlurView>
+                    </View>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -417,7 +416,7 @@ export default function ProfileScreen({ navigation }: any) {
           {/* New Premium Quiz Performance & Analytics Dashboard */}
           <Animatable.View animation="fadeInUp" delay={250} style={styles.analyticsSection}>
             <Text style={styles.sectionTitle}>Quiz Performance</Text>
-            <BlurView intensity={85} tint="light" style={styles.analyticsCard}>
+            <View style={styles.analyticsCard}>
               <View style={styles.chartHeader}>
                 <View>
                   <Text style={styles.chartTitle}>Quiz Score Progression</Text>
@@ -494,13 +493,13 @@ export default function ProfileScreen({ navigation }: any) {
                   </View>
                 )}
               </View>
-            </BlurView>
+            </View>
           </Animatable.View>
 
           {/* Settings */}
           <Animatable.View animation="fadeInUp" delay={300}>
             <Text style={styles.sectionTitle}>Settings</Text>
-            <BlurView intensity={85} tint="light" style={styles.settingsCard}>
+            <View style={styles.settingsCard}>
               {SETTINGS.map((item, index) => (
                 <View key={item.label}>
                   <TouchableOpacity
@@ -529,7 +528,7 @@ export default function ProfileScreen({ navigation }: any) {
                   {index < SETTINGS.length - 1 && <View style={styles.divider} />}
                 </View>
               ))}
-            </BlurView>
+            </View>
           </Animatable.View>
 
           <Text style={styles.versionText}>SignBridge v1.0.0</Text>
@@ -544,7 +543,7 @@ export default function ProfileScreen({ navigation }: any) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <BlurView intensity={90} tint="light" style={styles.modalBlurContainer}>
+          <View style={styles.modalBlurContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Edit Profile</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseBtn}>
@@ -648,7 +647,7 @@ export default function ProfileScreen({ navigation }: any) {
                 </LinearGradient>
               </TouchableOpacity>
             </ScrollView>
-          </BlurView>
+            </View>
         </View>
       </Modal>
     </LinearGradient>
@@ -668,7 +667,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.xxl,
+    paddingBottom: 110,
   },
   // Profile Header
   profileHeader: {
@@ -738,7 +737,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   statBox: {
@@ -771,6 +771,7 @@ const styles = StyleSheet.create({
   // Achievements
   achievementCard: {
     width: 96,
+    height: 124,
     marginRight: SPACING.sm,
     borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
@@ -784,9 +785,11 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
+    height: '100%',
   },
   achievementIconBg: {
     width: 50,
@@ -811,7 +814,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     padding: SPACING.md,
     ...SHADOWS.soft,
   },
@@ -976,7 +980,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
     marginBottom: SPACING.lg,
   },
@@ -1030,7 +1035,8 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.85)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     maxHeight: '85%',
     overflow: 'hidden',
   },
@@ -1136,7 +1142,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   resumeCardBlur: {

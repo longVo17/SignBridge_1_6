@@ -98,7 +98,7 @@ export default function VideoModal({ sign, visible, onClose, onComplete }: Video
                   onPress={() => { handleClose(); onComplete?.(); }}
                   activeOpacity={0.85}
                 >
-                  <Text style={styles.completeBtnText}>Đã học xong từ này</Text>
+                  <Text style={styles.completeBtnText}>I've learned this word! ✓</Text>
                 </TouchableOpacity>
               )}
 

@@ -8,7 +8,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/theme';
@@ -27,22 +26,22 @@ export const PracticeScreen = () => {
   };
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <View style={styles.blobTop} />
 
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <Animatable.View animation="fadeInDown" delay={50} style={styles.header}>
           <Text style={styles.screenTitle}>AI Practice</Text>
-          <BlurView intensity={80} tint="light" style={styles.scoreBadge}>
+          <View style={styles.scoreBadge}>
             <Ionicons name="trophy" size={14} color="#F59E0B" />
             <Text style={styles.scoreText}>240 pts</Text>
-          </BlurView>
+          </View>
         </Animatable.View>
 
         {/* Top Half — Reference Video */}
         <Animatable.View animation="fadeInDown" delay={100} style={styles.topSection}>
-          <BlurView intensity={85} tint="light" style={styles.videoCard}>
+          <View style={styles.videoCard}>
             <LinearGradient
               colors={['rgba(45,199,255,0.08)', 'rgba(45,199,255,0.18)']}
               style={styles.videoArea}
@@ -62,12 +61,12 @@ export const PracticeScreen = () => {
 
               <Text style={styles.videoHint}>Tap to watch reference</Text>
             </LinearGradient>
-          </BlurView>
+          </View>
         </Animatable.View>
 
         {/* Bottom Half — AI Camera Feed */}
         <Animatable.View animation="fadeInUp" delay={200} style={styles.bottomSection}>
-          <BlurView intensity={85} tint="light" style={styles.cameraCard}>
+          <View style={styles.cameraCard}>
             {/* Camera Simulated Feed */}
             <View style={styles.cameraSimulated}>
               <LinearGradient
@@ -96,12 +95,12 @@ export const PracticeScreen = () => {
                 </LinearGradient>
               </Animatable.View>
             </View>
-          </BlurView>
+          </View>
         </Animatable.View>
 
         {/* Controls */}
         <Animatable.View animation="slideInUp" delay={400} style={styles.controlsBar}>
-          <BlurView intensity={90} tint="light" style={styles.controlsBlur}>
+          <View style={styles.controlsBlur}>
             <TouchableOpacity style={styles.skipBtn} onPress={handleNext}>
               <Ionicons name="play-skip-forward" size={22} color={COLORS.textSecondary} />
               <Text style={styles.skipText}>Skip</Text>
@@ -124,7 +123,7 @@ export const PracticeScreen = () => {
               <Ionicons name="refresh" size={22} color={COLORS.textSecondary} />
               <Text style={styles.skipText}>Reset</Text>
             </TouchableOpacity>
-          </BlurView>
+          </View>
         </Animatable.View>
       </SafeAreaView>
     </LinearGradient>
@@ -162,7 +161,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.pill,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     gap: 5,
   },
   scoreText: {
@@ -180,7 +180,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   videoArea: {
@@ -238,7 +239,8 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   cameraSimulated: {
@@ -321,7 +323,7 @@ const styles = StyleSheet.create({
   // Controls bar
   controlsBar: {
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.sm,
+    paddingBottom: 110,
   },
   controlsBlur: {
     borderRadius: BORDER_RADIUS.xl,
@@ -332,7 +334,8 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   skipBtn: {

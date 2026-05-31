@@ -8,7 +8,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/theme';
 import { notificationService } from '../services/notification.service';
@@ -63,7 +62,7 @@ export default function NotificationsScreen({ navigation }: any) {
   };
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={styles.header}>
@@ -80,7 +79,7 @@ export default function NotificationsScreen({ navigation }: any) {
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Dynamic local push notification test trigger */}
-          <BlurView intensity={85} tint="light" style={styles.testBtnCard}>
+          <View style={styles.testBtnCard}>
             <View style={styles.testBtnInfo}>
               <Text style={styles.testBtnTitle}>Test Notifications</Text>
               <Text style={styles.testBtnDesc}>Trigger an immediate local push notification on this device.</Text>
@@ -101,15 +100,17 @@ export default function NotificationsScreen({ navigation }: any) {
                 <Text style={styles.triggerText}>Trigger</Text>
               </LinearGradient>
             </TouchableOpacity>
-          </BlurView>
+          </View>
 
           {notifications.length > 0 ? (
             notifications.map((item) => (
-              <BlurView
+              <View
                 key={item.id}
-                intensity={item.read ? 60 : 85}
-                tint="light"
-                style={[styles.notiCard, !item.read && styles.notiCardUnread]}
+                style={[
+                  styles.notiCard,
+                  !item.read && styles.notiCardUnread,
+                  { backgroundColor: item.read ? '#ffffff' : 'rgba(255,255,255,0.9)' }
+                ]}
               >
                 <View style={[styles.iconContainer, { backgroundColor: `${item.color}15` }]}>
                   <Ionicons name={item.icon} size={20} color={item.color} />
@@ -133,7 +134,7 @@ export default function NotificationsScreen({ navigation }: any) {
                 >
                   <Ionicons name="trash-outline" size={16} color={COLORS.textSecondary} />
                 </TouchableOpacity>
-              </BlurView>
+              </View>
             ))
           ) : (
             <View style={styles.emptyState}>
@@ -192,13 +193,14 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
     overflow: 'hidden',
+    backgroundColor: '#ffffff',
     ...SHADOWS.soft,
   },
   notiCardUnread: {
     borderColor: 'rgba(45,199,255,0.3)',
-    backgroundColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'rgba(255,255,255,0.9)',
   },
   iconContainer: {
     width: 40,
@@ -286,7 +288,7 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: 1.5,
     borderColor: 'rgba(45,199,255,0.25)',
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: '#ffffff',
     marginBottom: 8,
     overflow: 'hidden',
     ...SHADOWS.soft,

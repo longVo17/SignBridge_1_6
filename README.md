@@ -13,7 +13,7 @@
 
 **SignBridge** là ứng dụng di động đa nền tảng hỗ trợ học Ngôn ngữ ký hiệu Mỹ (ASL) và định hướng ký hiệu Ả Rập (WASL) tương tác, tích hợp công nghệ AI nhận diện thủ ngữ thông qua camera thiết bị thời gian thực. Ứng dụng được thiết kế tỉ mỉ theo ngôn ngữ giao diện kính mờ cao cấp (Light Theme Glassmorphism), mang lại trải nghiệm học tập lôi cuốn và mượt mà.
 
-> **GitHub Repository:** [longVo17/SignBridge](https://github.com/longVo17/SignBridge)
+> **GitHub Repository:** [longVo17/SignBridge_1_6](https://github.com/longVo17/SignBridge_1_6)
 > **Firebase Firestore Console:** [Project SignBridge Console](https://console.firebase.google.com/u/1/project/signbridge-c0b9c/firestore)
 
 ---
@@ -58,8 +58,8 @@ Hệ thống đã hoàn thiện toàn diện các mô-đun cốt lõi sẵn sàn
 ### 2. Cài Đặt Thư Viện
 Clone dự án về máy tính cá nhân của bạn:
 ```bash
-git clone https://github.com/longVo17/SignBridge.git
-cd SignBridge/SignBridgeApp
+git clone https://github.com/longVo17/SignBridge_1_6.git
+cd SignBridge_1_6
 ```
 
 Cài đặt các gói phụ thuộc cần thiết:

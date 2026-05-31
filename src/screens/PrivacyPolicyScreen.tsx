@@ -8,13 +8,12 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/theme';
 
 export default function PrivacyPolicyScreen({ navigation }: any) {
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header */}
         <View style={styles.header}>
@@ -25,7 +24,7 @@ export default function PrivacyPolicyScreen({ navigation }: any) {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <BlurView intensity={85} tint="light" style={styles.policyCard}>
+          <View style={styles.policyCard}>
             <Text style={styles.lastUpdated}>Last Updated: May 2026</Text>
 
             <Text style={styles.sectionHeader}>1. Information We Collect</Text>
@@ -61,7 +60,7 @@ export default function PrivacyPolicyScreen({ navigation }: any) {
             <Text style={styles.paragraph}>
               For any privacy inquiries or to delete your data, please contact engineering support at support@signbridge.app.
             </Text>
-          </BlurView>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -97,7 +96,8 @@ const styles = StyleSheet.create({
   policyCard: {
     borderRadius: BORDER_RADIUS.xl,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     padding: SPACING.lg,
     overflow: 'hidden',
     ...SHADOWS.soft,

@@ -4,7 +4,6 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import { COLORS, SPACING, BORDER_RADIUS, SHADOWS, TYPOGRAPHY } from '../../theme/theme';
 import { useAuthStore } from '../../store/authStore';
 import { useProgressStore } from '../../store/progressStore';
@@ -111,7 +110,7 @@ const LessonComplete: React.FC<LessonCompleteProps> = ({
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
-      <BlurView intensity={95} tint="light" style={styles.card}>
+      <View style={styles.card}>
         {/* Result Vector Icon */}
         <Animated.View style={[{ transform: [{ scale: starScale }], opacity: starOpacity, marginBottom: SPACING.md }]}>
           {passed ? (
@@ -267,7 +266,7 @@ const LessonComplete: React.FC<LessonCompleteProps> = ({
             </TouchableOpacity>
           </>
         )}
-      </BlurView>
+      </View>
     </Animated.View>
   );
 };
@@ -285,7 +284,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: BORDER_RADIUS.xl,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.85)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
+    backgroundColor: '#ffffff',
     overflow: 'hidden',
   },
   resultEmoji: {
@@ -387,11 +387,11 @@ const styles = StyleSheet.create({
   },
   leaderboardContainer: {
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    backgroundColor: '#ffffff',
     borderRadius: BORDER_RADIUS.lg,
     padding: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderColor: 'rgba(45, 199, 255, 0.15)',
     marginBottom: SPACING.sm,
   },
   leaderboardRow: {

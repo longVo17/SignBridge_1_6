@@ -55,7 +55,7 @@ export default function VideoPlayerCard({
 
   const isLoaded = status?.isLoaded ?? false;
   const isPlaying = isLoaded && (status as any)?.isPlaying;
-  const isBuffering = isLoaded && (status as any)?.isBuffering;
+  const isBuffering = isLoaded && (status as any)?.isBuffering && !isPlaying;
 
   const videoSource = sourceUrl
     ? { uri: sourceUrl }
@@ -150,10 +150,10 @@ export default function VideoPlayerCard({
                   style={styles.guideContent}
                 >
                   <Ionicons name="hand-left-outline" size={32} color={COLORS.primary} style={{ marginBottom: 10 }} />
-                  <Text style={styles.guideTitle}>📖 Hướng dẫn động tác</Text>
+                  <Text style={styles.guideTitle}>📖 Gesture Guide</Text>
                   <Text style={styles.guideBody}>{guideText}</Text>
                   <TouchableOpacity style={styles.guideClose} onPress={toggleGuide}>
-                    <Text style={styles.guideCloseText}>Đã hiểu ✓</Text>
+                    <Text style={styles.guideCloseText}>Got it ✓</Text>
                   </TouchableOpacity>
                 </LinearGradient>
               </Animated.View>
@@ -162,7 +162,7 @@ export default function VideoPlayerCard({
         ) : (
           <View style={styles.noVideo}>
             <Ionicons name="videocam-off-outline" size={40} color="rgba(255,255,255,0.4)" />
-            <Text style={styles.noVideoText}>Chưa có video</Text>
+            <Text style={styles.noVideoText}>No video yet</Text>
           </View>
         )}
       </View>
@@ -197,7 +197,7 @@ export default function VideoPlayerCard({
               style={styles.playBtnGrad}
             >
               <Ionicons name={isPlaying ? 'pause' : 'play'} size={18} color="#FFF" />
-              <Text style={styles.playBtnText}>{isPlaying ? 'Dừng' : 'Phát'}</Text>
+              <Text style={styles.playBtnText}>{isPlaying ? 'Pause' : 'Play'}</Text>
             </LinearGradient>
           </TouchableOpacity>
 

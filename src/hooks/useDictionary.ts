@@ -17,7 +17,11 @@ export function useSignsList(category?: string) {
     setLoading(true);
     setError(null);
     try {
-      const data = await getSignsByCategory(category);
+      // 6 second timeout for dictionary signs
+      const data = await Promise.race([
+        getSignsByCategory(category),
+        new Promise<Sign[]>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 6000))
+      ]);
       setSigns(data);
     } catch {
       setError('Could not load dictionary data. Please check your network connection.');

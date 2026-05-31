@@ -45,15 +45,25 @@ export const notificationService = {
         // Fallback silently in bare environments
       }
 
-      const token = (await Notifications.getExpoPushTokenAsync({
-        projectId: projectId || "8e36e3d2-d4f1-4db5-b827-0ea876ab3910"
-      })).data;
-      
-      // Update push token in user's profile
-      const userRef = doc(db, 'users', uid);
-      await updateDoc(userRef, { pushToken: token }).catch(err => {
-        console.warn("Failed to save pushToken to Firestore:", err);
-      });
+      let token = null;
+      try {
+        token = (await Notifications.getExpoPushTokenAsync({
+          projectId: projectId || "8e36e3d2-d4f1-4db5-b827-0ea876ab3910"
+        })).data;
+
+        if (token) {
+          // Update push token in user's profile
+          const userRef = doc(db, 'users', uid);
+          await updateDoc(userRef, { pushToken: token }).catch(err => {
+            console.warn("Failed to save pushToken to Firestore:", err);
+          });
+        }
+      } catch (tokenErr) {
+        console.warn(
+          "Expo Push Token fetch skipped/failed. This is normal in local development if your EAS project credentials don't match. Local triggers will still function perfectly. Error:",
+          tokenErr
+        );
+      }
 
       // Platform-specific configuration for Android
       if (Platform.OS === 'android') {
@@ -67,7 +77,7 @@ export const notificationService = {
 
       return token;
     } catch (error) {
-      console.error('Error registering for push notifications:', error);
+      console.warn('Error registering for push notifications:', error);
       return null;
     }
   },
@@ -89,16 +99,15 @@ export const notificationService = {
           sound: true,
         },
         trigger: {
-          type: 'calendar',
+          type: 'daily',
           hour: 19, // 7 PM
           minute: 0,
-          repeats: true,
         } as any,
       });
 
       console.log('Successfully scheduled daily study reminder at 19:00');
     } catch (error) {
-      console.error('Error scheduling daily reminder:', error);
+      console.warn('Error scheduling daily reminder:', error);
     }
   },
 
@@ -130,10 +139,9 @@ export const notificationService = {
               sound: true,
             },
             trigger: {
-              type: 'calendar',
+              type: 'daily',
               hour: 20,
               minute: 0,
-              repeats: true,
             } as any,
           });
           return;
@@ -153,10 +161,9 @@ export const notificationService = {
             sound: true,
           },
           trigger: {
-            type: 'calendar',
+            type: 'daily',
             hour: 20,
             minute: 0,
-            repeats: true,
           } as any,
         });
       } else {
@@ -168,16 +175,15 @@ export const notificationService = {
             sound: true,
           },
           trigger: {
-            type: 'calendar',
+            type: 'daily',
             hour: 20,
             minute: 0,
-            repeats: false, // only for today, tomorrow it will be rescheduled based on their activity
           } as any,
         });
         console.log('User has NOT studied today. Scheduled streak danger reminder for 20:00 today.');
       }
     } catch (error) {
-      console.error('Error scheduling streak reminder:', error);
+      console.warn('Error scheduling streak reminder:', error);
     }
   },
 
@@ -194,7 +200,7 @@ export const notificationService = {
         trigger: null, // deliver immediately
       });
     } catch (error) {
-      console.error('Error sending test notification:', error);
+      console.warn('Error sending test notification:', error);
     }
   }
 };

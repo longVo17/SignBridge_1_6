@@ -25,9 +25,17 @@ export const useProgress = () => {
       setLoading(true);
       setStatus('loading');
       try {
-        let p = await learningService.getUserProgress(user.uid);
+        // 6 second timeout for fetching progress
+        let p = await Promise.race([
+          learningService.getUserProgress(user.uid),
+          new Promise<any>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 6000))
+        ]);
         if (!p) {
-          p = await learningService.initUserProgress(user.uid);
+          // 6 second timeout for initializing progress
+          p = await Promise.race([
+            learningService.initUserProgress(user.uid),
+            new Promise<any>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 6000))
+          ]);
         }
 
         // Simple streak check logic

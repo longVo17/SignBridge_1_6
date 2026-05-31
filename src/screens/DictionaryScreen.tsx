@@ -13,7 +13,6 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 
@@ -22,17 +21,38 @@ import { Sign } from '../types/data.types';
 import { useSignsList, useSignSearch, useCategories } from '../hooks/useDictionary';
 import VideoModal from '../components/ui/VideoModal';
 
-const { width } = Dimensions.get('window');
-const CARD_W = (width - SPACING.sm * 2 - 12) / 2;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const CATEGORY_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
-  'All':       'sparkles-outline',
+  'All': 'sparkles-outline',
   'Greetings': 'hand-left-outline',
-  'Basics':    'chatbubble-outline',
-  'Daily':     'sunny-outline',
-  'Family':    'people-outline',
-  'Numbers':   'grid-outline',
-  'Colors':    'color-palette-outline',
+  'Basics': 'chatbubble-outline',
+  'Daily': 'sunny-outline',
+  'Family': 'people-outline',
+  'Numbers': 'grid-outline',
+  'Colors': 'color-palette-outline',
+};
+
+const GET_LETTER_GRADIENT = (char: string): [string, string] => {
+  const code = ((char[0] || 'A').charCodeAt(0)) % 5;
+  switch (code) {
+    case 0: return ['#E0F2FE', '#BAE6FD']; // Light Blue
+    case 1: return ['#E0F7FA', '#B2EBF2']; // Cyan
+    case 2: return ['#EEF2FF', '#E0E7FF']; // Indigo
+    case 3: return ['#ECFDF5', '#D1FAE5']; // Emerald
+    default: return ['#FDF2F8', '#FCE7F3']; // Pink / Rose
+  }
+};
+
+const GET_LETTER_COLOR = (char: string) => {
+  const code = ((char[0] || 'A').charCodeAt(0)) % 5;
+  switch (code) {
+    case 0: return '#0284C7';
+    case 1: return '#00838F';
+    case 2: return '#4F46E5';
+    case 3: return '#059669';
+    default: return '#DB2777';
+  }
 };
 
 export const DictionaryScreen = () => {
@@ -42,6 +62,16 @@ export const DictionaryScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [query, setQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  // Dynamic grid setup for premium responsiveness on tablets/phones
+  const numColumns = useMemo(() => {
+    return SCREEN_WIDTH > 768 ? 4 : SCREEN_WIDTH > 480 ? 3 : 2;
+  }, []);
+
+  const cardWidth = useMemo(() => {
+    const gaps = SPACING.sm * 2 + 12 * (numColumns - 1);
+    return (SCREEN_WIDTH - gaps) / numColumns;
+  }, [numColumns]);
 
   // 1. Fetch all signs once (using useSignsList(undefined))
   const { signs, loading, error, reload } = useSignsList(undefined);
@@ -100,24 +130,21 @@ export const DictionaryScreen = () => {
       >
         <Text style={styles.pageTitle}>ASL Dictionary</Text>
         <Text style={styles.pageSubtitle}>
-          {query.trim()
-            ? `${displayedSigns.length} result${displayedSigns.length !== 1 ? 's' : ''} for "${query}"`
-            : `${displayedSigns.length} ASL sign${displayedSigns.length !== 1 ? 's' : ''}`}
+          ASL signs for everyday communication
         </Text>
 
         {/* Search Bar */}
-        <BlurView 
-          intensity={85} 
-          tint="light" 
+        <View
           style={[
             styles.searchBar,
+            { backgroundColor: 'rgba(255,255,255,0.92)' },
             isSearchFocused && styles.searchBarFocused
           ]}
         >
-          <Ionicons 
-            name="search-outline" 
-            size={18} 
-            color={isSearchFocused ? '#2DC7FF' : COLORS.textSecondary} 
+          <Ionicons
+            name="search-outline"
+            size={18}
+            color={isSearchFocused ? '#2DC7FF' : COLORS.textSecondary}
           />
           <TextInput
             style={styles.searchInput}
@@ -134,7 +161,7 @@ export const DictionaryScreen = () => {
               <Ionicons name="close-circle" size={18} color={COLORS.textSecondary} />
             </TouchableOpacity>
           )}
-        </BlurView>
+        </View>
       </LinearGradient>
 
       {/* Category Filter */}
@@ -151,10 +178,10 @@ export const DictionaryScreen = () => {
               style={[styles.categoryChip, active && styles.categoryChipActive]}
               onPress={() => setSelectedCategory(item === 'All' ? undefined : item)}
             >
-              <Ionicons 
-                name={CATEGORY_ICONS[item] ?? 'bookmark-outline'} 
-                size={14} 
-                color={active ? '#FFF' : '#2DC7FF'} 
+              <Ionicons
+                name={CATEGORY_ICONS[item] ?? 'bookmark-outline'}
+                size={14}
+                color={active ? '#FFF' : '#2DC7FF'}
               />
               <Text style={[styles.categoryLabel, active && styles.categoryLabelActive]}>
                 {item}
@@ -169,17 +196,24 @@ export const DictionaryScreen = () => {
   // ── Sign Card ──────────────────────────────────────────────────
   const renderSignCard = ({ item, index }: { item: Sign; index: number }) => (
     <Animatable.View animation="fadeInUp" delay={index * 40} useNativeDriver>
-      <TouchableOpacity style={styles.card} onPress={() => openModal(item)} activeOpacity={0.75}>
+      <TouchableOpacity style={[styles.card, { width: cardWidth }]} onPress={() => openModal(item)} activeOpacity={0.75}>
         {/* Thumbnail or Icon placeholder */}
-        <View style={styles.thumbWrap}>
-          {item.thumbnailURL ? (
-            <Image source={{ uri: item.thumbnailURL }} style={styles.thumb} resizeMode="cover" />
-          ) : (
-            <Ionicons name="videocam-outline" size={40} color="#2DC7FF" />
-          )}
+        <View style={[styles.thumbWrap, { height: cardWidth * 0.6 }]}>
+          <LinearGradient
+            colors={GET_LETTER_GRADIENT(item.title || 'A')}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          >
+            <View style={styles.placeholderInner}>
+              <Text style={[styles.placeholderLetter, { color: GET_LETTER_COLOR(item.title || 'A') }]}>
+                {item.title.substring(0, 2).toUpperCase()}
+              </Text>
+            </View>
+          </LinearGradient>
           {/* Play overlay */}
           <View style={styles.playOverlay}>
-            <Ionicons name="play-circle" size={36} color="rgba(255,255,255,0.9)" />
+            <Ionicons name="play-circle" size={30} color="rgba(255,255,255,0.9)" />
           </View>
           {/* Difficulty badge */}
           <View style={[styles.badge, { backgroundColor: getDiffColor(item.difficulty) }]}>
@@ -229,12 +263,13 @@ export const DictionaryScreen = () => {
   );
 
   return (
-    <LinearGradient colors={['#E8F8FF', '#F0FBFF', '#FAFEFF']} style={styles.container}>
+    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
+          key={numColumns}
           data={displayedSigns}
           keyExtractor={item => item.id}
-          numColumns={2}
+          numColumns={numColumns}
           columnWrapperStyle={styles.row}
           renderItem={renderSignCard}
           ListHeaderComponent={renderHeader()}
@@ -274,13 +309,16 @@ function getDiffColor(d: string) {
 // ── Styles ─────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  listContent: { paddingBottom: 100 },
+  listContent: { paddingBottom: 110 },
 
   // Header
   pageHeader: {
     padding: SPACING.sm,
     paddingTop: SPACING.md,
     paddingBottom: SPACING.xs,
+    width: '100%',
+    maxWidth: 800,
+    alignSelf: 'center',
   },
   pageTitle: {
     ...TYPOGRAPHY.headlineMedium,
@@ -327,6 +365,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     gap: 8,
+    alignSelf: 'center',
   },
   categoryChip: {
     flexDirection: 'row',
@@ -359,7 +398,6 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    width: CARD_W,
     backgroundColor: 'rgba(255,255,255,0.85)',
     borderRadius: BORDER_RADIUS.md,
     overflow: 'hidden',
@@ -369,11 +407,22 @@ const styles = StyleSheet.create({
   },
   thumbWrap: {
     width: '100%',
-    height: CARD_W * 0.6,
     backgroundColor: COLORS.surfaceHighlight,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    overflow: 'hidden',
+  },
+  placeholderInner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderLetter: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 34,
+    fontWeight: 'bold',
+    opacity: 0.85,
   },
   thumb: {
     width: '100%',
