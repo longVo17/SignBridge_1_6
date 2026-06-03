@@ -81,9 +81,9 @@ export const updateUserProfile = async (
 ): Promise<void> => {
   const currentUser = auth.currentUser;
   if (!currentUser) throw new Error("No user logged in");
-  
+
   await updateProfile(currentUser, { displayName, photoURL });
-  
+
   if (email && email.trim() !== currentUser.email) {
     try {
       await firebaseUpdateEmail(currentUser, email.trim());
@@ -91,10 +91,10 @@ export const updateUserProfile = async (
       console.warn("Could not update email in Firebase Auth (re-auth required), updating in Firestore:", authErr);
     }
   }
-  
+
   const ref = doc(db, 'users', currentUser.uid);
-  await updateDoc(ref, { 
-    displayName, 
+  await updateDoc(ref, {
+    displayName,
     photoURL,
     ...(email ? { email: email.trim() } : {}),
     ...(phoneNumber ? { phoneNumber: phoneNumber.trim() } : { phoneNumber: "" }),
@@ -136,7 +136,9 @@ try {
 export const configureGoogleSignIn = () => {
   if (GoogleSignin) {
     GoogleSignin.configure({
-      webClientId: '438957272127-web-client-id-placeholder.apps.googleusercontent.com',
+      // Use the Web OAuth client (client_type: 3) — NOT the Android client (type: 1)
+      // The Web client ID is required for Firebase Google Auth on Android
+      webClientId: '438957272127-87li3bp7lf6888fljlg49d7an5mlfa06.apps.googleusercontent.com',
       offlineAccess: true,
     });
   }
@@ -144,25 +146,33 @@ export const configureGoogleSignIn = () => {
 
 // Sign in / Sign up with Google
 export const signInWithGoogle = async (): Promise<User> => {
-  if (!GoogleSignin) {
-    throw new Error("Google Sign-In is not supported in this environment (Expo Go/Web).");
+  if (!GoogleSignin || !GoogleSignin.signIn) {
+    throw new Error("Google Sign-In native module is not available. Ensure you are running on a physical device/emulator using a custom Development Client build, not Expo Go.");
   }
-  
+
   try {
-    await GoogleSignin.hasPlayServices();
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     const response = await GoogleSignin.signIn();
     const idToken = response.data?.idToken;
     if (!idToken) throw new Error("No ID token returned from Google Sign-In");
-    
+
     const credential = GoogleAuthProvider.credential(idToken);
     const userCredential = await signInWithCredential(auth, credential);
-    
+
     // Create their Firestore profile if they don't have one
     await createUserProfile(userCredential.user, userCredential.user.displayName || undefined);
-    
+
     return userCredential.user;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error signing in with Google:", error);
-    throw error;
+    let msg = error.message || 'Đăng nhập Google thất bại';
+    if (error.code === '10' || error.message?.includes('10') || error.message?.includes('DEVELOPER_ERROR')) {
+      msg = 'DEVELOPER_ERROR (Code 10): Vui lòng kiểm tra xem bạn đã bật nhà cung cấp Google trong Firebase Authentication chưa, và đảm bảo mã SHA-1 của thiết bị chạy đã được đăng ký chính xác trên Firebase Console.';
+    } else if (error.code === '7' || error.message?.includes('network_error')) {
+      msg = 'Network Error (Code 7): Lỗi mạng khi kết nối tới dịch vụ Google. Vui lòng kiểm tra kết nối internet.';
+    } else if (error.code === '12500') {
+      msg = 'Google Play Services Error (Code 12500): Thiết bị của bạn cần cập nhật hoặc cài đặt Google Play Services.';
+    }
+    throw new Error(msg);
   }
 };

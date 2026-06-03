@@ -4,6 +4,25 @@ import { useProgressStore } from '../store/progressStore';
 import { learningService } from '../services/learning.service';
 import { notificationService } from '../services/notification.service';
 
+const getLocalDateString = (dateInput?: string | Date | number): string => {
+  const date = dateInput ? new Date(dateInput) : new Date();
+  if (isNaN(date.getTime())) {
+    const fallback = new Date();
+    return `${fallback.getFullYear()}-${String(fallback.getMonth() + 1).padStart(2, '0')}-${String(fallback.getDate()).padStart(2, '0')}`;
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getYesterdayLocalDateString = (dateInput?: string | Date | number): string => {
+  const date = dateInput ? new Date(dateInput) : new Date();
+  const yesterday = new Date(date);
+  yesterday.setDate(yesterday.getDate() - 1);
+  return getLocalDateString(yesterday);
+};
+
 export const useProgress = () => {
   const { user } = useAuthStore();
   const {
@@ -38,12 +57,12 @@ export const useProgress = () => {
           ]);
         }
 
-        // Simple streak check logic
-        const today = new Date().toISOString().split('T')[0];
-        const lastPractice = new Date(p.lastPracticeDate).toISOString().split('T')[0];
+        // Robust streak check logic using local timezone calendar days
+        const today = getLocalDateString();
+        const lastPractice = getLocalDateString(p.lastPracticeDate);
+        const yesterday = getYesterdayLocalDateString();
 
         if (lastPractice !== today) {
-          const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
           if (lastPractice !== yesterday && p.streakDays > 0) {
             await learningService.updateStreak(user.uid, 0, p.lastPracticeDate);
             p.streakDays = 0;
@@ -76,16 +95,35 @@ export const useProgress = () => {
       await learningService.markLessonComplete(user.uid, lessonId, xpReward);
       addCompletedLesson(lessonId, xpReward);
 
-      // Check and update streak
-      const today = new Date().toISOString().split('T')[0];
+      // Robust local-timezone streak check and update logic
+      const today = getLocalDateString();
       const p = useProgressStore.getState().progress;
       if (p) {
-        const lastPractice = new Date(p.lastPracticeDate).toISOString().split('T')[0];
+        const lastPractice = getLocalDateString(p.lastPracticeDate);
+        const yesterday = getYesterdayLocalDateString();
         const nowIso = new Date().toISOString();
-        if (lastPractice !== today) {
-          const newStreak = p.streakDays + 1;
+
+        if (p.streakDays === 0) {
+          // New/first streak
+          const newStreak = 1;
           await learningService.updateStreak(user.uid, newStreak, nowIso);
           updateStreak(newStreak, nowIso);
+        } else {
+          if (lastPractice === today) {
+            // Already practiced today, keep current streak but update lastPracticeDate
+            await learningService.updateStreak(user.uid, p.streakDays, nowIso);
+            updateStreak(p.streakDays, nowIso);
+          } else if (lastPractice === yesterday) {
+            // Continued streak
+            const newStreak = p.streakDays + 1;
+            await learningService.updateStreak(user.uid, newStreak, nowIso);
+            updateStreak(newStreak, nowIso);
+          } else {
+            // Streak broken, start new streak at 1
+            const newStreak = 1;
+            await learningService.updateStreak(user.uid, newStreak, nowIso);
+            updateStreak(newStreak, nowIso);
+          }
         }
 
         // Reschedule streak reminder with updated activity timestamp

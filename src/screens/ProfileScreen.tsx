@@ -55,6 +55,18 @@ export default function ProfileScreen({ navigation }: any) {
   const { user, setUser } = useAuthStore();
   const { progress } = useProgress();
 
+  const settingsList = React.useMemo(() => {
+    const list = [...SETTINGS];
+    if (user?.role === 'ADMIN') {
+      list.splice(list.length - 1, 0, {
+        icon: 'shield-checkmark-outline',
+        label: 'Admin Panel',
+        action: 'AdminPanel',
+      });
+    }
+    return list;
+  }, [user?.role]);
+
   // Firestore profile state to load email, phone number, etc.
   const [profileData, setProfileData] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
@@ -269,13 +281,23 @@ export default function ProfileScreen({ navigation }: any) {
             >
               <Text style={styles.editProfileText}>Edit Profile</Text>
             </TouchableOpacity>
+
+            {/* AI Chat shortcut button */}
+            <TouchableOpacity
+              style={styles.aiChatBtn}
+              onPress={() => navigation.navigate('HelpSupport')}
+              activeOpacity={0.85}
+            >
+              <Ionicons name="chatbubble-ellipses-outline" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.aiChatBtnText}>Ask AI Assistant</Text>
+            </TouchableOpacity>
           </Animatable.View>
 
           {/* Real-time statistics section with vector icons */}
           <Animatable.View animation="fadeInUp" delay={150} style={styles.statsWrapper}>
             <View style={styles.statsCard}>
               {[
-                { label: 'Lessons', value: (progress?.completedLessons?.length || 0).toString(), iconName: 'book-outline' as const, color: '#2DC7FF' },
+                { label: 'Words Learned', value: (progress?.completedLessons?.length || 0).toString(), iconName: 'bookmark-outline' as const, color: '#2DC7FF' },
                 { label: 'Day Streak', value: (progress?.streakDays || 0).toString(), iconName: 'flame-outline' as const, color: '#F97316' },
                 { label: 'XP', value: (progress?.totalXP || 0).toString(), iconName: 'sparkles-outline' as const, color: '#EAB308' },
               ].map((stat, idx, arr) => (
@@ -500,7 +522,7 @@ export default function ProfileScreen({ navigation }: any) {
           <Animatable.View animation="fadeInUp" delay={300}>
             <Text style={styles.sectionTitle}>Settings</Text>
             <View style={styles.settingsCard}>
-              {SETTINGS.map((item, index) => (
+              {settingsList.map((item, index) => (
                 <View key={item.label}>
                   <TouchableOpacity
                     style={styles.settingItem}
@@ -525,7 +547,7 @@ export default function ProfileScreen({ navigation }: any) {
                     </Text>
                     <Ionicons name="chevron-forward" size={18} color={COLORS.textSecondary} style={{ marginLeft: 'auto' }} />
                   </TouchableOpacity>
-                  {index < SETTINGS.length - 1 && <View style={styles.divider} />}
+                  {index < settingsList.length - 1 && <View style={styles.divider} />}
                 </View>
               ))}
             </View>
@@ -725,6 +747,22 @@ const styles = StyleSheet.create({
   editProfileText: {
     ...TYPOGRAPHY.labelLarge,
     color: COLORS.primary,
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  aiChatBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: 9,
+    borderRadius: BORDER_RADIUS.pill,
+    backgroundColor: COLORS.primary,
+    ...SHADOWS.glass,
+  },
+  aiChatBtnText: {
+    ...TYPOGRAPHY.labelLarge,
+    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: 'bold',
   },

@@ -9,7 +9,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 const { initializeApp } = require('firebase/app');
-const { getFirestore, doc, writeBatch, collection, getDocs, deleteDoc } = require('firebase/firestore');
+const { getFirestore, doc, writeBatch, collection, getDocs, deleteDoc, setDoc } = require('firebase/firestore');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBh5WzJk-nk_FX3fBe5jMeMCGLkLBaAG6M',
@@ -61,6 +61,26 @@ const SIGNS = [
   { id: 'blue',       title: 'Blue',       category: 'Colors',    difficulty: 'Easy',   emoji: '🔵', videoId: 'BoLqK5d9VqY', description: 'B-handshape twists at wrist.' },
   { id: 'red',        title: 'Red',        category: 'Colors',    difficulty: 'Easy',   emoji: '🔴', videoId: 'BoLqK5d9VqY', description: 'Index finger brushes down lips.' },
   { id: 'green',      title: 'Green',      category: 'Colors',    difficulty: 'Easy',   emoji: '🟢', videoId: 'BoLqK5d9VqY', description: 'G-handshape twists at wrist.' },
+  // Custom Vocabulary Words
+  { id: 'book',       title: 'Book',       category: 'Vocabulary', difficulty: 'Easy',   emoji: '📖', videoId: 'h7IiMjWlVGo', description: 'Clasp palms together then open them like opening a book.' },
+  { id: 'buy',        title: 'Buy',        category: 'Vocabulary', difficulty: 'Easy',   emoji: '💳', videoId: 'h7IiMjWlVGo', description: 'Place flat hand on other palm, then move it forward and down.' },
+  { id: 'coffee',     title: 'Coffee',     category: 'Vocabulary', difficulty: 'Easy',   emoji: '☕', videoId: 'h7IiMjWlVGo', description: 'Two closed fists, one on top of the other, rotating in a grinding motion.' },
+  { id: 'come',       title: 'Come',       category: 'Vocabulary', difficulty: 'Easy',   emoji: '🏃', videoId: 'h7IiMjWlVGo', description: 'Point index fingers toward each other and roll them inward.' },
+  { id: 'food',       title: 'Food',       category: 'Vocabulary', difficulty: 'Easy',   emoji: '🍔', videoId: 'h7IiMjWlVGo', description: 'Fingertips of flat O-handshape tap mouth repeatedly.' },
+  { id: 'game',       title: 'Game',       category: 'Vocabulary', difficulty: 'Easy',   emoji: '🎮', videoId: 'h7IiMjWlVGo', description: 'Two thumbs-up fists tap together at the knuckles.' },
+  { id: 'go',         title: 'Go',         category: 'Vocabulary', difficulty: 'Easy',   emoji: '🚶', videoId: 'h7IiMjWlVGo', description: 'Point index fingers forward and move them away from the body.' },
+  { id: 'i',          title: 'I',          category: 'Vocabulary', difficulty: 'Easy',   emoji: '👤', videoId: 'h7IiMjWlVGo', description: 'Point index finger to center of chest.' },
+  { id: 'market',     title: 'Market',     category: 'Vocabulary', difficulty: 'Medium', emoji: '🛒', videoId: 'h7IiMjWlVGo', description: 'Flat hands push forward and back alternately.' },
+  { id: 'morning',    title: 'Morning',    category: 'Vocabulary', difficulty: 'Easy',   emoji: '🌅', videoId: 'h7IiMjWlVGo', description: 'Dominant hand rises up from behind non-dominant arm.' },
+  { id: 'movie',      title: 'Movie',      category: 'Vocabulary', difficulty: 'Medium', emoji: '🎬', videoId: 'h7IiMjWlVGo', description: 'Open non-dominant palm sideways, wave dominant hand in front.' },
+  { id: 'play',       title: 'Play',       category: 'Vocabulary', difficulty: 'Easy',   emoji: '🎈', videoId: 'h7IiMjWlVGo', description: 'Y-handshapes twist back and forth at the wrists.' },
+  { id: 'read',       title: 'Read',       category: 'Vocabulary', difficulty: 'Easy',   emoji: '📚', videoId: 'h7IiMjWlVGo', description: 'Index and middle fingers sweep down the open palm of other hand.' },
+  { id: 'study',      title: 'Study',      category: 'Vocabulary', difficulty: 'Easy',   emoji: '✏️', videoId: 'h7IiMjWlVGo', description: 'Fingertips of dominant hand flutter over open non-dominant palm.' },
+  { id: 'today',      title: 'Today',      category: 'Vocabulary', difficulty: 'Easy',   emoji: '📅', videoId: 'h7IiMjWlVGo', description: 'Y-handshapes move downward twice in front of chest.' },
+  { id: 'tomorrow',   title: 'Tomorrow',   category: 'Vocabulary', difficulty: 'Easy',   emoji: '📆', videoId: 'h7IiMjWlVGo', description: 'Thumb of A-handshape moves forward from the side of the cheek.' },
+  { id: 'watch',      title: 'Watch',      category: 'Vocabulary', difficulty: 'Easy',   emoji: '👀', videoId: 'h7IiMjWlVGo', description: 'Index and middle finger (V-shape) point outward from eyes.' },
+  { id: 'water',      title: 'Water',      category: 'Vocabulary', difficulty: 'Easy',   emoji: '💧', videoId: 'h7IiMjWlVGo', description: 'W-handshape index finger taps side of chin.' },
+  { id: 'we',         title: 'We',         category: 'Vocabulary', difficulty: 'Easy',   emoji: '👥', videoId: 'h7IiMjWlVGo', description: 'Index finger arcs from dominant to non-dominant shoulder.' },
 ];
 
 // ── 26 Bảng chữ cái ASL ───────────────────────────────────────────────────────
@@ -97,20 +117,26 @@ const ALL_SIGNS = [...SIGNS, ...ALPHABET_SIGNS];
 
 // ── Learning Paths ─────────────────────────────────────────────────────────────
 const LEARNING_PATHS = [
-  { id: 'intro',       title: 'Introduction to ASL',        description: 'Understand the power of sign language and how it connects communities', icon: '✨', order: 1, totalXP: 60,  lessonCount: 2  },
-  { id: 'alphabet_1',  title: 'ASL Alphabet - Part 1',      description: 'Learn ASL letters A to M',      icon: '🔤', order: 2, totalXP: 260, lessonCount: 13 },
-  { id: 'alphabet_2',  title: 'ASL Alphabet - Part 2',      description: 'Learn ASL letters N to Z',      icon: '🔤', order: 3, totalXP: 260, lessonCount: 13 },
-  { id: 'greetings', title: 'Chào hỏi & Gặp gỡ',     description: 'Học cách chào xã giao cơ bản',          icon: '👋', order: 4, totalXP: 210, lessonCount: 7  },
-  { id: 'basics',    title: 'Giao tiếp thiết yếu',   description: 'Học cách bày tỏ nhu cầu cốt lõi',        icon: '💡', order: 5, totalXP: 150, lessonCount: 5  },
-  { id: 'daily',     title: 'Cuộc sống hàng ngày',  description: 'Các hoạt động và địa điểm mỗi ngày',    icon: '🌅', order: 6, totalXP: 180, lessonCount: 6  },
-  { id: 'family',    title: 'Gia đình & Bạn bè',   description: 'Từ vựng về những người thân thương',    icon: '👨‍👩‍👧', order: 7, totalXP: 120, lessonCount: 4  },
-  { id: 'numbers',   title: 'Số đếm cơ bản',       description: 'Học đếm các chữ số thông dụng',        icon: '🔢', order: 8, totalXP: 150, lessonCount: 5  },
-  { id: 'colors',    title: 'Màu sắc cơ bản',       description: 'Nhận diện màu sắc qua ký hiệu',        icon: '🎨', order: 9, totalXP: 90,  lessonCount: 3  },
+  { id: 'intro',       title: 'Introduction to ASL',       description: 'Understand the power of sign language and how it connects communities', icon: '✨', order: 1,  totalXP: 90,  lessonCount: 3  },
+  { id: 'vocab_1',    title: 'Basic Vocabulary - Part 1', description: 'Learn daily words: book, buy, coffee, come, drink, food, game, go, home, i', icon: 'star-outline', order: 2,  totalXP: 300, lessonCount: 10 },
+  { id: 'vocab_2',    title: 'Basic Vocabulary - Part 2', description: 'Learn daily words: like, market, morning, movie, play, read, school, study, today, tomorrow', icon: 'star-outline', order: 3,  totalXP: 300, lessonCount: 10 },
+  { id: 'vocab_3',    title: 'Basic Vocabulary - Part 3', description: 'Learn daily words: watch, water, we', icon: 'star-outline', order: 4,  totalXP: 90,  lessonCount: 3  },
+  { id: 'alphabet_1', title: 'ASL Alphabet - Part 1',     description: 'Learn ASL letters A to M',      icon: '🔤', order: 5,  totalXP: 260, lessonCount: 13 },
+  { id: 'alphabet_2', title: 'ASL Alphabet - Part 2',     description: 'Learn ASL letters N to Z',      icon: '🔤', order: 6,  totalXP: 260, lessonCount: 13 },
+  { id: 'greetings',  title: 'Greetings & Meetings',      description: 'Learn how to greet and meet people in ASL', icon: '👋', order: 7,  totalXP: 210, lessonCount: 7  },
+  { id: 'basics',     title: 'Essential Communication',   description: 'Learn how to express core needs in ASL', icon: '💡', order: 8,  totalXP: 150, lessonCount: 5  },
+  { id: 'daily',      title: 'Daily Life',                description: 'Everyday activities and places in ASL', icon: '🌅', order: 9,  totalXP: 180, lessonCount: 6  },
+  { id: 'family',     title: 'Family & Friends',          description: 'Vocabulary about loved ones and friends', icon: '👨‍👩‍👧', order: 10, totalXP: 120, lessonCount: 4  },
+  { id: 'numbers',    title: 'ASL Numbers',               description: 'Learn basic counting and number signs', icon: '🔢', order: 11, totalXP: 150, lessonCount: 5  },
+  { id: 'colors',     title: 'ASL Colors',                description: 'Learn color names in American Sign Language', icon: '🎨', order: 12, totalXP: 90,  lessonCount: 3  },
 ];
 
 // ── Lesson mapping ─────────────────────────────────────────────────────────────
 const PATH_LESSONS = {
-  intro:     ['hello', 'understand'],
+  vocab_1:   ['book', 'buy', 'coffee', 'come', 'drink', 'food', 'game', 'go', 'home', 'i'],
+  vocab_2:   ['like', 'market', 'morning', 'movie', 'play', 'read', 'school', 'study', 'today', 'tomorrow'],
+  vocab_3:   ['watch', 'water', 'we'],
+  intro:     ['hello', 'understand', 'yes'],
   alphabet_1:  ALPHABET_SIGNS.slice(0, 13).map(s => s.id),
   alphabet_2:  ALPHABET_SIGNS.slice(13).map(s => s.id),
   greetings: ['hello', 'goodbye', 'please', 'thankyou', 'sorry', 'yes', 'no'],
@@ -124,7 +150,33 @@ const PATH_LESSONS = {
 // ── Seed ────────────────────────────────────────────────────────────────────────
 async function seedAll() {
   const now = Date.now();
-  console.log('🌱 Starting Firestore full seed v2...\n');
+  console.log('🌱 Starting Firestore full seed v3...\n');
+
+  // 0a. Reset ALL user progress so they start fresh with the new path ordering
+  console.log('🔄 Resetting all user progress...');
+  try {
+    // Progress is stored in top-level collection: userProgress/{uid}
+    const progressSnap = await getDocs(collection(db, 'userProgress'));
+    let resetCount = 0;
+    for (const progressDoc of progressSnap.docs) {
+      await setDoc(progressDoc.ref, {
+        uid: progressDoc.id,
+        completedLessons: [],
+        completedPaths: [],
+        totalXP: 0,
+        streakDays: 0,
+        lastActivity: null,
+        quizScores: {},
+        lessonXP: {},
+        resetAt: now,
+      }, { merge: false });
+      resetCount++;
+    }
+    console.log(`  ✓ Reset progress for ${resetCount} user(s)`);
+  } catch (err) {
+    console.warn('  ⚠ Could not reset user progress:', err.message);
+  }
+
 
   // 0. Clean up obsolete paths (e.g. old unified 'alphabet' path)
   console.log('🧹 Checking for obsolete learning paths to delete...');
@@ -153,12 +205,34 @@ async function seedAll() {
     console.warn('Warning during obsolete paths cleanup:', err.message);
   }
 
-  // 1. All signs (original 30 + 26 alphabet)
+  // 1. Fetch existing dictionary documents to check for Cloudinary video links
+  console.log('🔍 Checking existing dictionary in Firestore for Cloudinary URLs...');
+  const dictCol = collection(db, 'dictionary');
+  const dictSnap = await getDocs(dictCol);
+  const existingSigns = {};
+  dictSnap.forEach(dDoc => {
+    existingSigns[dDoc.id] = dDoc.data();
+  });
+
+  // 1.1 All signs (original + alphabet + new vocabulary)
   const batch1 = writeBatch(db);
   for (const sign of ALL_SIGNS) {
     const ref = doc(db, 'dictionary', sign.id);
-    const videoURL = sign.videoId ? `https://www.youtube.com/watch?v=${sign.videoId}` : (sign.videoURL || '');
-    const thumbnailURL = sign.videoId ? `https://img.youtube.com/vi/${sign.videoId}/hqdefault.jpg` : '';
+    const existing = existingSigns[sign.id];
+    
+    let videoURL = sign.videoId ? `https://www.youtube.com/watch?v=${sign.videoId}` : (sign.videoURL || '');
+    let thumbnailURL = sign.videoId ? `https://img.youtube.com/vi/${sign.videoId}/hqdefault.jpg` : '';
+    
+    if (existing && existing.videoURL) {
+      const isCloudinary = existing.videoURL.includes('cloudinary') || existing.videoURL.includes('res.cloudinary.com');
+      if (isCloudinary) {
+        console.log(`   preserving Cloudinary URL for sign: ${sign.id} (${existing.videoURL})`);
+        videoURL = existing.videoURL;
+        if (existing.thumbnailURL) {
+          thumbnailURL = existing.thumbnailURL;
+        }
+      }
+    }
     
     batch1.set(ref, {
       id:          sign.id,
@@ -194,8 +268,9 @@ async function seedAll() {
       const ref = doc(db, 'learningPaths', pathId, 'lessons', lessonId);
       let lessonTitle = sign ? sign.title : signId;
       if (pathId === 'intro') {
-        if (i === 0) lessonTitle = 'Why Learn Sign Language?';
-        if (i === 1) lessonTitle = 'The Power of Gestures';
+        if (i === 0) lessonTitle = 'What is ASL?';
+        if (i === 1) lessonTitle = 'How ASL Sentences Work';
+        if (i === 2) lessonTitle = 'The ASL Alphabet & Its Uses';
       }
 
       batch.set(ref, {

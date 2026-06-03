@@ -20,6 +20,8 @@ import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/th
 import { Sign } from '../types/data.types';
 import { useSignsList, useSignSearch, useCategories } from '../hooks/useDictionary';
 import VideoModal from '../components/ui/VideoModal';
+import { parseSentenceToASLGloss } from '../utils/aslGrammarParser';
+import SentencePlayerModal from '../components/ui/SentencePlayerModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -59,6 +61,7 @@ export const DictionaryScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [sentenceModalVisible, setSentenceModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [query, setQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -75,6 +78,11 @@ export const DictionaryScreen = () => {
 
   // 1. Fetch all signs once (using useSignsList(undefined))
   const { signs, loading, error, reload } = useSignsList(undefined);
+
+  // Compute matched ASL Gloss signs for multi-word queries
+  const matchedPhraseData = useMemo(() => {
+    return parseSentenceToASLGloss(query, signs);
+  }, [query, signs]);
 
   // 2. Extract unique categories client-side from loaded signs
   const categories = useMemo(() => {
@@ -162,6 +170,30 @@ export const DictionaryScreen = () => {
             </TouchableOpacity>
           )}
         </View>
+
+        {/* Sentence Visualizer Prompt Card */}
+        {matchedPhraseData.matchedSigns.length >= 2 && (
+          <Animatable.View animation="bounceIn" duration={600} style={styles.phraseCardWrapper}>
+            <TouchableOpacity
+              style={styles.phraseCard}
+              onPress={() => setSentenceModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.phraseCardLeft}>
+                <View style={styles.phraseIconCircle}>
+                  <Ionicons name="film-outline" size={20} color={COLORS.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.phraseCardTitle}>Play ASL Sentence Sequence</Text>
+                  <Text style={styles.phraseCardSubtitle}>
+                    Gloss: {matchedPhraseData.parsedGloss.map(w => w.toUpperCase()).join(' → ')}
+                  </Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={COLORS.primary} style={{ marginLeft: 8 }} />
+            </TouchableOpacity>
+          </Animatable.View>
+        )}
       </LinearGradient>
 
       {/* Category Filter */}
@@ -291,6 +323,13 @@ export const DictionaryScreen = () => {
         sign={selectedSign}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
+      />
+
+      <SentencePlayerModal
+        visible={sentenceModalVisible}
+        onClose={() => setSentenceModalVisible(false)}
+        originalPhrase={query}
+        matchedSigns={matchedPhraseData.matchedSigns}
       />
     </LinearGradient>
   );
@@ -490,5 +529,45 @@ const styles = StyleSheet.create({
   retryText: {
     ...TYPOGRAPHY.labelLarge,
     color: '#FFF',
+  },
+  phraseCardWrapper: {
+    marginTop: 12,
+    width: '100%',
+  },
+  phraseCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(45, 199, 255, 0.25)',
+    ...SHADOWS.soft,
+  },
+  phraseCardLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  phraseIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(45, 199, 255, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  phraseCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  phraseCardSubtitle: {
+    fontSize: 11,
+    color: COLORS.primary,
+    fontWeight: '600',
+    marginTop: 2,
   },
 });

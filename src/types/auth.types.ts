@@ -9,6 +9,7 @@ export interface UserProfile {
   streakDays: number;
   lastActiveDate: string; // ISO date string "YYYY-MM-DD"
   phoneNumber?: string;
+  role?: 'STUDENT' | 'ADMIN';
 }
 
 // Auth state shape used in Zustand store
@@ -18,6 +19,7 @@ export interface AuthUser {
   displayName: string | null;
   photoURL: string | null;
   phoneNumber?: string;
+  role?: 'STUDENT' | 'ADMIN';
 }
 
 export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';

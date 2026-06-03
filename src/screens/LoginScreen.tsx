@@ -59,11 +59,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={['#FFFFFF', '#FAFDFD', '#F4FBFC']} style={styles.container}>
-      {/* Decorative blobs */}
-      <View style={styles.blobTopRight} />
-      <View style={styles.blobBottomLeft} />
-
+    <LinearGradient colors={['#FFFFFF', '#FDFDFD', '#F8FAFC']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -296,12 +292,13 @@ const styles = StyleSheet.create({
   formCard: {
     borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
-    ...SHADOWS.glass,
+    ...SHADOWS.soft,
   },
   blurCard: {
     borderRadius: BORDER_RADIUS.xl,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
     overflow: 'hidden',
   },
   formInner: { padding: SPACING.lg },

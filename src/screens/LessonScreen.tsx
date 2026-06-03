@@ -18,6 +18,67 @@ import LessonComplete from '../components/lesson/LessonComplete';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Phase = 'learn' | 'quiz' | 'complete';
 
+// ─── Intro Reading Slides ─────────────────────────────────────────────────────
+const INTRO_SLIDES = [
+  {
+    title: 'What is ASL?',
+    emoji: '🤟',
+    color: '#2DC7FF',
+    sections: [
+      {
+        heading: 'American Sign Language',
+        text: 'ASL (American Sign Language) is a complete, natural language that uses hand shapes, movements, facial expressions, and body posture instead of spoken words. It is the primary language of Deaf and hard-of-hearing communities in the United States and parts of Canada.',
+      },
+      {
+        heading: 'A Visual Language',
+        text: 'Unlike spoken languages which use sound, ASL is entirely visual. Signers use space in front of their bodies as a "canvas" to communicate. It has its own grammar, vocabulary, and syntax — completely different from English.',
+      },
+      {
+        heading: 'Why Learn ASL?',
+        text: 'Learning ASL connects you with 500,000+ native signers. It opens career opportunities in education, healthcare, and interpretation — and most importantly, it builds bridges between hearing and Deaf communities.',
+      },
+    ],
+  },
+  {
+    title: 'How ASL Sentences Work',
+    emoji: '💬',
+    color: '#7C3AED',
+    sections: [
+      {
+        heading: 'Topic-Comment Structure',
+        text: 'ASL typically uses a Topic-Comment sentence structure. You introduce the topic first, then make a statement about it. For example: "STORE I GO" means "I am going to the store." The topic (STORE) comes first.',
+      },
+      {
+        heading: 'Time Comes First',
+        text: 'Time markers are signed at the beginning of a sentence. Instead of "I went to school yesterday", ASL signs: "YESTERDAY SCHOOL I GO-THERE". Time context sets the scene for everything that follows.',
+      },
+      {
+        heading: 'Facial Expressions Matter',
+        text: 'Facial expressions are grammar in ASL — not just emotion. Raised eyebrows signal a yes/no question. Furrowed brows indicate a WH-question (who, what, where). Without the correct expression, the meaning changes completely.',
+      },
+    ],
+  },
+  {
+    title: 'The ASL Alphabet & Its Uses',
+    emoji: '🔤',
+    color: '#059669',
+    sections: [
+      {
+        heading: 'Finger-Spelling',
+        text: 'The ASL manual alphabet (A–Z) lets you spell out words letter by letter. This is called finger-spelling. It is used for proper names, technical terms, or any word that has no established sign — like a person\'s name or a place.',
+      },
+      {
+        heading: '26 Handshapes',
+        text: 'Each of the 26 letters of the English alphabet has a unique handshape in ASL. Most are one-handed (held with your dominant hand). Two letters — J and Z — also include a movement component to trace the letter shape in the air.',
+      },
+      {
+        heading: 'The Foundation of Learning',
+        text: 'Mastering the ASL alphabet is essential for every ASL learner. It lets you communicate any word immediately, even if you don\'t know its sign. You will learn all 26 handshapes in the Alphabet lessons of this app.',
+      },
+    ],
+  },
+];
+
 // ─── Quiz helpers ─────────────────────────────────────────────────────────────
 function buildQuizOptions(correct: Sign, allSigns: Sign[]): Sign[] {
   // Get wrong options from the same signs pool (different id)
@@ -46,6 +107,7 @@ export const LessonScreen = () => {
   const navigation = useNavigation<any>();
   const { pathId, pathTitle } = route.params || {};
 
+  const isIntro = pathId === 'intro';
   const { completeLesson, completePath, recordQuizScore, progress } = useProgress();
 
   // Data state
@@ -102,7 +164,27 @@ export const LessonScreen = () => {
   }, [pathId]);
 
   // ── Phase: Learn handlers ─────────────────────────────────────────────────
-  const handleLearnNext = useCallback(() => {
+  const handleLearnNext = useCallback(async () => {
+    if (isIntro) {
+      // Intro path: advance slides, no quiz
+      if (learnIndex < INTRO_SLIDES.length - 1) {
+        setLearnIndex(prev => prev + 1);
+      } else {
+        // Mark all intro lessons complete
+        let earnedXP = 0;
+        for (const lesson of lessons) {
+          const alreadyDone = progress?.completedLessons?.includes(lesson.id);
+          if (!alreadyDone) {
+            await completeLesson(lesson.id, pathId, 30);
+            earnedXP += 30;
+          }
+        }
+        await completePath(pathId);
+        setXpEarned(earnedXP);
+        setPhase('complete');
+      }
+      return;
+    }
     if (learnIndex < lessons.length - 1) {
       setLearnIndex(prev => prev + 1);
     } else {
@@ -113,7 +195,7 @@ export const LessonScreen = () => {
       setCorrectCount(0);
       setPhase('quiz');
     }
-  }, [learnIndex, lessons, signsMap]);
+  }, [learnIndex, lessons, signsMap, isIntro, progress, completeLesson, completePath, pathId]);
 
   // handleOpenVideo removed — FlashCard handles video inline
 
@@ -167,7 +249,8 @@ export const LessonScreen = () => {
 
   // ── Progress bar ───────────────────────────────────────────────────────────
   const getProgressPercent = () => {
-    if (phase === 'learn') return ((learnIndex + 1) / lessons.length) * 50;
+    const total = isIntro ? INTRO_SLIDES.length : lessons.length;
+    if (phase === 'learn') return ((learnIndex + 1) / total) * (isIntro ? 100 : 50);
     if (phase === 'quiz')  return 50 + ((quizIndex + 1) / (quizQuestions.length || 1)) * 50;
     return 100;
   };
@@ -219,21 +302,58 @@ export const LessonScreen = () => {
                 style={[styles.progressFill, { width: `${getProgressPercent()}%` }]}
               />
             </View>
-            {/* Phase label */}
+                      {/* Phase label */}
             <Text style={styles.phaseLabel}>
-              {phase === 'learn' ? `Learn ${learnIndex + 1}/${lessons.length}` :
-               phase === 'quiz'  ? `Quiz ${quizIndex + 1}/${quizQuestions.length}` :
-               'Complete!'}
+              {isIntro
+                ? `${learnIndex + 1} of ${INTRO_SLIDES.length}`
+                : phase === 'learn'
+                ? `Learn ${learnIndex + 1}/${lessons.length}`
+                : phase === 'quiz'
+                ? `Quiz ${quizIndex + 1}/${quizQuestions.length}`
+                : 'Complete!'}
             </Text>
           </View>
         </View>
 
         {/* ── Main Content ── */}
         <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {phase === 'learn' && currentSign && (
+                    {/* ── Intro Reading Mode ── */}
+          {isIntro && phase === 'learn' && (() => {
+            const slide = INTRO_SLIDES[learnIndex];
+            return (
+              <View style={styles.introCard}>
+                <View style={[styles.introEmojiWrap, { backgroundColor: slide.color + '18' }]}>
+                  <Text style={styles.introEmoji}>{slide.emoji}</Text>
+                </View>
+                <Text style={[styles.introCardTitle, { color: slide.color }]}>{slide.title}</Text>
+                {slide.sections.map((sec, idx) => (
+                  <View key={idx} style={styles.introSection}>
+                    <View style={[styles.introSectionBar, { backgroundColor: slide.color }]} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.introSectionHeading}>{sec.heading}</Text>
+                      <Text style={styles.introSectionText}>{sec.text}</Text>
+                    </View>
+                  </View>
+                ))}
+                <TouchableOpacity
+                  style={[styles.introNextBtn, { backgroundColor: slide.color }]}
+                  onPress={handleLearnNext}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.introNextBtnText}>
+                    {learnIndex < INTRO_SLIDES.length - 1 ? 'Next →' : 'Finish Introduction ✓'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })()}
+
+          {/* ── Regular Lesson (FlashCard) ── */}
+          {!isIntro && phase === 'learn' && currentSign && (
             <FlashCard
               sign={currentSign}
               lessonIndex={learnIndex}
@@ -316,5 +436,71 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.lg,
     paddingBottom: SPACING.xxl,
+  },
+
+  // ── Intro Slide Styles ────────────────────────────────────────────────────
+  introCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
+    borderWidth: 1.5,
+    borderColor: 'rgba(45,199,255,0.12)',
+    ...SHADOWS.soft,
+  },
+  introEmojiWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: SPACING.md,
+  },
+  introEmoji: {
+    fontSize: 36,
+  },
+  introCardTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+    letterSpacing: -0.3,
+  },
+  introSection: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+    marginBottom: SPACING.md,
+    alignItems: 'flex-start',
+  },
+  introSectionBar: {
+    width: 3,
+    borderRadius: 2,
+    alignSelf: 'stretch',
+    marginTop: 2,
+  },
+  introSectionHeading: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#1E293B',
+    marginBottom: 4,
+    letterSpacing: 0.2,
+    textTransform: 'uppercase',
+  },
+  introSectionText: {
+    fontSize: 14,
+    color: '#475569',
+    lineHeight: 21,
+  },
+  introNextBtn: {
+    borderRadius: BORDER_RADIUS.pill,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: SPACING.lg,
+    ...SHADOWS.glass,
+  },
+  introNextBtnText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 });

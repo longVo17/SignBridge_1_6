@@ -110,6 +110,17 @@ export default function HomeScreen({ navigation }: any) {
               </View>
             </TouchableOpacity>
 
+            {/* AI Assistant Chat Trigger */}
+            <TouchableOpacity
+              style={styles.bellButton}
+              onPress={() => navigation.navigate('HelpSupport')}
+              activeOpacity={0.7}
+            >
+              <View style={styles.bellBlur}>
+                <Ionicons name="chatbubble-ellipses-outline" size={20} color={COLORS.primary} />
+              </View>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.profileAvatar}
               onPress={() => navigation.navigate('Profile')}

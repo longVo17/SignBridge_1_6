@@ -66,3 +66,20 @@ export interface FlashCardProgress {
   totalReviews: number;          // Total review sessions completed
   completionRate: number;        // 0-100 percentage
 }
+
+// Database Quiz representations
+export interface QuizQuestion {
+  id: string;
+  signId: string;
+  questionText: string;
+  options: string[];
+  correctIndex: number;
+}
+
+export interface Quiz {
+  id: string;
+  pathId: string;
+  passingScore: number;
+  questions: QuizQuestion[];
+  createdAt?: any;
+}

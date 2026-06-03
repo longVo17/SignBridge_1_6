@@ -51,28 +51,32 @@ export const LearningPathScreen = () => {
   const totalPaths = paths.length;
   const overallPct = totalPaths > 0 ? Math.round((completedPathsCount / totalPaths) * 100) : 0;
 
-  // English translation mapping helper for hardcoded path titles/descriptions if they come from firestore in Vietnamese
+  // Only translate Vietnamese or old path IDs — English titles are returned as-is
   const translateTitle = (title: string) => {
     const t = title.toLowerCase();
-    if (t.includes('part 1') || t.includes('phần 1') || t.includes('alphabet_1')) return 'ASL Alphabet - Part 1';
-    if (t.includes('part 2') || t.includes('phần 2') || t.includes('alphabet_2')) return 'ASL Alphabet - Part 2';
-    if (t.includes('bảng chữ cái') || t.includes('alphabet')) return 'ASL Alphabet';
+    // Only translate if it's clearly a Vietnamese string
+    if (t.includes('bảng chữ cái')) return 'ASL Alphabet';
     if (t.includes('chào hỏi') || t.includes('greeting')) return 'Greetings & Meetings';
     if (t.includes('giao tiếp') || t.includes('essential')) return 'Essential Communication';
-    if (t.includes('màu sắc') || t.includes('color')) return 'ASL Colors';
-    if (t.includes('chữ số') || t.includes('number')) return 'ASL Numbers';
+    if (t.includes('màu sắc')) return 'ASL Colors';
+    if (t.includes('chữ số')) return 'ASL Numbers';
+    if (t.includes('cuộc sống') || t.includes('hàng ngày')) return 'Daily Life';
+    if (t.includes('gia đình')) return 'Family & Friends';
+    if (t.includes('số đếm')) return 'ASL Numbers';
+    // Return the original title (already English)
     return title;
   };
 
   const translateDesc = (desc: string) => {
     const d = desc.toLowerCase();
-    if (d.includes('a to m') || d.includes('a-m') || d.includes('part 1') || d.includes('phần 1')) return 'Learn ASL finger-spelling letters A to M';
-    if (d.includes('n to z') || d.includes('n-z') || d.includes('part 2') || d.includes('phần 2')) return 'Learn ASL finger-spelling letters N to Z';
-    if (d.includes('chữ cái') || d.includes('letters')) return 'Learn ASL finger-spelling letters A-Z';
-    if (d.includes('xã giao') || d.includes('greetings')) return 'Master essential basic everyday greeting signs';
-    if (d.includes('thiết yếu') || d.includes('essential')) return 'Learn daily essential conversational signs';
-    if (d.includes('màu') || d.includes('colors')) return 'Learn color names in American Sign Language';
-    if (d.includes('số') || d.includes('numbers')) return 'Master numbers and simple counting signs';
+    if (d.includes('chữ cái') || (d.includes('chữ') && d.includes('cái'))) return 'Learn ASL finger-spelling letters A-Z';
+    if (d.includes('xã giao') || d.includes('chào')) return 'Master essential everyday greeting signs';
+    if (d.includes('thiết yếu') || d.includes('nhu cầu')) return 'Learn daily essential conversational signs';
+    if (d.includes('màu') && !d.includes('màn')) return 'Learn color names in American Sign Language';
+    if (d.includes('số') && d.includes('đếm')) return 'Master numbers and simple counting signs';
+    if (d.includes('hàng ngày') || d.includes('daily life')) return 'Activities and places for everyday life';
+    if (d.includes('gia đình') || d.includes('bạn bè')) return 'Vocabulary about loved ones and friends';
+    // Return original description (already English)
     return desc;
   };
 
@@ -221,21 +225,25 @@ export const LearningPathScreen = () => {
                   {!isLocked && (
                     <View style={styles.actionRowFull}>
                       <TouchableOpacity
-                        style={styles.learnBtn}
+                        style={[styles.learnBtn, path.id === 'intro' && { flex: 1 }]}
                         onPress={() => navigation.navigate('Lesson', { pathId: path.id, pathTitle: translateTitle(path.title) })}
                         activeOpacity={0.8}
                       >
                         <Ionicons name="play-circle" size={16} color="#FFF" style={{ marginRight: 4 }} />
-                        <Text numberOfLines={1} style={styles.learnBtnText}>Start Lesson</Text>
+                        <Text numberOfLines={1} style={styles.learnBtnText}>
+                          {path.id === 'intro' ? 'Read Introduction' : 'Start Lesson'}
+                        </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.flashBtn}
-                        onPress={() => navigation.navigate('FlashCardReview', { pathId: path.id, pathTitle: translateTitle(path.title) })}
-                        activeOpacity={0.8}
-                      >
-                        <Ionicons name="layers-outline" size={16} color={COLORS.primary} style={{ marginRight: 4 }} />
-                        <Text numberOfLines={1} style={styles.flashBtnText}>Flashcards</Text>
-                      </TouchableOpacity>
+                      {path.id !== 'intro' && (
+                        <TouchableOpacity
+                          style={styles.flashBtn}
+                          onPress={() => navigation.navigate('FlashCardReview', { pathId: path.id, pathTitle: translateTitle(path.title) })}
+                          activeOpacity={0.8}
+                        >
+                          <Ionicons name="layers-outline" size={16} color={COLORS.primary} style={{ marginRight: 4 }} />
+                          <Text numberOfLines={1} style={styles.flashBtnText}>Flashcards</Text>
+                        </TouchableOpacity>
+                      )}
                     </View>
                   )}
                 </View>

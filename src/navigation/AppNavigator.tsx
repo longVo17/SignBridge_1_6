@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../theme/theme';
 
 // Firebase auth listener
-import { subscribeToAuthState, configureGoogleSignIn } from '../services/auth.service';
+import { subscribeToAuthState, configureGoogleSignIn, getUserProfile } from '../services/auth.service';
 import { useAuthStore } from '../store/authStore';
 import { AuthUser } from '../types/auth.types';
 import { notificationService } from '../services/notification.service';
@@ -22,6 +22,7 @@ import { LearningPathScreen } from '../screens/LearningPathScreen';
 import { PracticeScreen } from '../screens/PracticeScreen';
 import { DictionaryScreen } from '../screens/DictionaryScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+
 import { TranslationScreen } from '../screens/TranslationScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import { LessonScreen } from '../screens/LessonScreen';
@@ -31,6 +32,9 @@ import FlashCardSummaryScreen from '../screens/FlashCardSummaryScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import HelpSupportScreen from '../screens/HelpSupportScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
+import AdminPanelScreen from '../screens/AdminPanelScreen';
+// AIChatScreen is the HelpSupportScreen reused as a bottom tab
+import AIChatScreen from '../screens/HelpSupportScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -118,24 +122,38 @@ function MainTabNavigator() {
 }
 
 export default function AppNavigator() {
-  const { status, setUser, setStatus } = useAuthStore();
+  const { user, status, setUser, setStatus } = useAuthStore();
 
   // Subscribe to Firebase auth state on app mount
   useEffect(() => {
     configureGoogleSignIn();
-    const unsubscribe = subscribeToAuthState((firebaseUser) => {
+    const unsubscribe = subscribeToAuthState(async (firebaseUser) => {
       if (firebaseUser) {
+        let role: 'STUDENT' | 'ADMIN' = 'STUDENT';
+        try {
+          const profile = await getUserProfile(firebaseUser.uid);
+          if (profile && profile.role) {
+            role = profile.role;
+          }
+        } catch (err) {
+          console.warn("Failed to fetch user profile in AppNavigator:", err);
+        }
+
         const authUser: AuthUser = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
+          role: role,
         };
         setUser(authUser);
 
-        // Register device notifications and schedule local reminders
+        // Register device notifications, trigger immediate notification on entry, and schedule local reminders
         notificationService.registerForPushNotifications(firebaseUser.uid)
-          .then(() => notificationService.scheduleDailyReminder())
+          .then(() => {
+            notificationService.sendImmediateTestNotification();
+            return notificationService.scheduleDailyReminder();
+          })
           .catch(err => console.warn("Failed to init push notifications:", err));
       } else {
         setUser(null);
@@ -184,6 +202,9 @@ export default function AppNavigator() {
             <Stack.Screen name="Notifications" component={NotificationsScreen} />
             <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+            {user?.role === 'ADMIN' && (
+              <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
+            )}
           </>
         ) : (
           // Unauthenticated routes

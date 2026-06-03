@@ -33,8 +33,8 @@ const LessonComplete: React.FC<LessonCompleteProps> = ({
   const { user } = useAuthStore();
   const { progress } = useProgressStore();
   
-  const scorePercent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-  const passed = scorePercent >= PASS_THRESHOLD;
+  const scorePercent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 100;
+  const passed = totalQuestions > 0 ? (scorePercent >= PASS_THRESHOLD) : true;
 
   const scaleAnim = useRef(new Animated.Value(0.6)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -125,21 +125,23 @@ const LessonComplete: React.FC<LessonCompleteProps> = ({
         <Text style={styles.subtitle}>{pathTitle}</Text>
 
         {/* Score card */}
-        <View style={[styles.scoreCard, passed ? styles.scoreCardPass : styles.scoreCardFail]}>
-          <Text style={[styles.scorePercent, { color: passed ? '#16A34A' : '#DC2626' }]}>
-            {scorePercent}%
-          </Text>
-          <Text style={styles.scoreLabel}>
-            {correctAnswers} / {totalQuestions} correct
-          </Text>
-          <Text style={styles.scoreThreshold}>
-            {passed ? (
-              <Text style={{ color: '#16A34A', fontWeight: 'bold' }}>Passed (≥70% required)</Text>
-            ) : (
-              <Text style={{ color: '#DC2626', fontWeight: 'bold' }}>Need {PASS_THRESHOLD}% to pass</Text>
-            )}
-          </Text>
-        </View>
+        {totalQuestions > 0 && (
+          <View style={[styles.scoreCard, passed ? styles.scoreCardPass : styles.scoreCardFail]}>
+            <Text style={[styles.scorePercent, { color: passed ? '#16A34A' : '#DC2626' }]}>
+              {scorePercent}%
+            </Text>
+            <Text style={styles.scoreLabel}>
+              {correctAnswers} / {totalQuestions} correct
+            </Text>
+            <Text style={styles.scoreThreshold}>
+              {passed ? (
+                <Text style={{ color: '#16A34A', fontWeight: 'bold' }}>Passed (≥70% required)</Text>
+              ) : (
+                <Text style={{ color: '#DC2626', fontWeight: 'bold' }}>Need {PASS_THRESHOLD}% to pass</Text>
+              )}
+            </Text>
+          </View>
+        )}
 
         {passed && (
           <>

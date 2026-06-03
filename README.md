@@ -18,32 +18,38 @@
 
 ---
 
-##  Các Tính Năng Hiện Tại (Tính đến 29/05/2026)
+##  Các Tính Năng Hiện Tại (Tính đến 04/06/2026)
 
 Hệ thống đã hoàn thiện toàn diện các mô-đun cốt lõi sẵn sàng cho môi trường sản xuất (Production-Ready):
 
 1.  ** Xác thực người dùng (Authentication):**
     *   Đăng ký và Đăng nhập bảo mật thông qua **Firebase Authentication**.
-    *   Giao diện Glassmorphism mượt mà với tính năng kiểm soát email/mật khẩu tối ưu (Tự động cuộn email dài tránh tràn ô nhập liệu).
+    *   **Google Sign-In:** Hỗ trợ đăng nhập nhanh bằng tài khoản Google, tự động cấu hình và kiểm tra SDK, đi kèm cơ chế chẩn đoán lỗi chi tiết (DEVELOPER_ERROR 10, Network Error) bằng tiếng Việt cho quá trình chạy máy ảo/thiết bị thực.
+    *   Giao diện Glassmorphism mượt mà mới với nền màu sáng Slate nhã nhặn, sang trọng, loại bỏ các chi tiết màu xanh/viền cứng gây rối mắt.
 2.  ** Bài học Mở đầu & Lộ trình Học tập (Learning Path):**
-    *   **Introduction to ASL (Cấp độ 1):** Bài học mở đầu truyền cảm hứng, giải thích lý do và ý nghĩa của ngôn ngữ ký hiệu thông qua 2 bài học trực quan *"Why Learn Sign Language?"* và *"The Power of Gestures"*.
+    *   **Introduction to ASL (Cấp độ 1):** Bài học mở đầu truyền cảm hứng, giới thiệu về ASL, ngữ pháp cơ bản và bảng chữ cái với 3 slides tương tác tuyệt đẹp. Hỗ trợ cuộn tự động và đã tối ưu hóa bố cục giao diện (không bị thu hẹp màn hình).
+    *   **Không có Quiz/Flashcards cho bài mở đầu:** Bỏ qua màn hình Quiz và kết quả 0% không cần thiết ở bài học Introduction, tự động chuyển đến màn hình ăn mừng nhận XP khi đọc xong slide.
     *   **ASL Alphabet Part 1 & Part 2:** Phân tách bảng chữ cái A-Z khoa học giúp người dùng không bị quá tải.
     *   Các bài học giao tiếp nâng cao: *Greetings & Meetings, Essential Communication, Colors, Numbers, v.v.*
 3.  ** Ôn tập Thẻ ghi nhớ thông minh (Flashcards Hub):**
-    *   Tích hợp cử giúp vuốt thẻ **PanResponder 60fps** cực nhạy: Vuốt **Phải** để đánh dấu đã thuộc (*Mastered*), vuốt **Left** để tiếp tục ôn luyện (*Still Learning*).
+    *   Tích hợp cử chỉ vuốt thẻ **PanResponder 60fps** cực nhạy: Vuốt **Phải** để đánh dấu đã thuộc (*Mastered*), vuốt **Trái** để tiếp tục ôn luyện (*Still Learning*).
     *   Hiển thị viền màu động theo thời gian thực khi kéo thẻ (Xanh lá/Đỏ) cùng hiệu ứng lật thẻ 3D xem video.
     *   **Khôi phục tiến trình dang dở:** Tự động lưu tiến trình và cho phép học viên ôn tập tiếp tục các từ chưa thuộc để đạt mục tiêu 100%.
-4.  ** Phân tích Tiến trình & Bảng xếp hạng thực tế (Analytics & Leaderboard):**
+4.  ** Trợ lý AI hỏi đáp ASL chuyên sâu (OpenRouter & Gemini 2.5):**
+    *   Tích hợp chatbot chuyên nghiệp giải đáp mọi thắc mắc về Ngôn ngữ ký hiệu Mỹ (ASL), ngữ pháp, văn hóa người Điếc.
+    *   Sử dụng API của **OpenRouter** thông qua mô hình **`google/gemini-2.5-flash`** cực nhanh và ổn định, giải quyết triệt để lỗi giới hạn cuộc gọi (`limit: 0`) của tài khoản Google Cloud miễn phí.
+    *   **Truy cập nhanh chóng:** Nút chat AI dạng bong bóng được tích hợp ngay tại **Header trang chủ** (kế bên nút thông báo) và trong trang **Profile** giúp người dùng trò chuyện bất kỳ lúc nào.
+5.  ** Phân tích Tiến trình & Bảng xếp hạng thực tế (Analytics & Leaderboard):**
     *   Bảng xếp hạng toàn hệ thống chỉ hiển thị học viên thật từ cơ sở dữ liệu Firestore dựa trên XP tích lũy thực tế.
     *   Biểu đồ phân tích điểm số Quiz dạng **Lollipop Chart** thuần Native tuyệt đẹp với tooltip điểm bay lơ lửng và chấm tròn phát sáng ở đỉnh cột.
-5.  ** Thông báo thông minh & Lập lịch Streak (Push Notifications & Streaks):**
+6.  ** Thông báo thông minh & Lập lịch Streak (Push Notifications & Streaks):**
     *   Nút Chuông thông báo kính mờ tại Header trang chủ, kết nối trực tiếp vào trang **Notifications Screen**.
     *   **Smart Streak Scheduler:** Tự động phân tích xem hôm nay người dùng đã học chưa để lên lịch nhắc nhở chuỗi ngày linh hoạt (Cảnh báo lúc 20:00 tối nay nếu chưa học, hoặc hẹn 20:00 tối mai nếu đã hoàn thành bài học).
     *   Hỗ trợ **Deep Linking** thời gian thực (Nhấn vào thông báo đẩy ngoài màn hình khóa tự động mở app và chuyển trang thẳng vào danh sách thông báo).
-6.  ** Công cụ hỗ trợ quản trị viên (Admin Tools):**
+7.  ** Công cụ hỗ trợ quản trị viên (Admin Tools):**
     *   **Obsolete Paths Purger:** Script seed dữ liệu tự động quét sạch các bài học lỗi thời trên Firestore trước khi nạp cấu trúc mới.
     *   **User Progress Reset Utility:** Khôi phục tiến trình học tập của bất kỳ học viên nào về 0% qua terminal chỉ bằng UID mà không làm mất thông tin tài khoản hay gây lỗi xếp hạng.
-7.  ** Màn hình tĩnh chuyên nghiệp:**
+8.  ** Màn hình tĩnh chuyên nghiệp:**
     *   Trang tĩnh Trợ giúp FAQ **Help & Support** với các hộp accordion thu gọn mượt mà.
     *   Trang chính sách bảo mật **Privacy Policy** chuẩn mực.
 
