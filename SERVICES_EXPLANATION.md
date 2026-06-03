@@ -1,9 +1,9 @@
 # GIẢI THÍCH CHI TIẾT CÁC SERVICES TRONG SIGNBRIDGE
 *(Tài liệu chuyên sâu phục vụ báo cáo Đồ án tốt nghiệp / DACN1)*
 
-Hệ thống dịch vụ (Services) của dự án **SignBridge** đóng vai trò là lớp nghiệp vụ (Business Logic Layer) trung gian. Chúng chịu trách nhiệm giao tiếp với cơ sở dữ liệu Firebase Firestore, API xác thực Firebase Auth, API trí tuệ nhân tạo OpenRouter, YouTube API, và các dịch vụ native của hệ điều hành (Notifications).
+Hệ thống dịch vụ (Services) của dự án **SignBridge** đóng vai trò là lớp nghiệp vụ (Business Logic Layer) trung gian. Chúng chịu trách nhiệm giao tiếp với cơ sở dữ liệu Firebase Firestore, API xác thực Firebase Auth, API trí tuệ nhân tạo OpenRouter, và các dịch vụ native của hệ điều hành (Notifications).
 
-Dưới đây là mô tả chi tiết cách hoạt động của toàn bộ **8 Services** trong thư mục [src/services/](file:///d:/2SignBridgeApp/src/services/):
+Dưới đây là mô tả chi tiết cách hoạt động của toàn bộ **7 Services** trong thư mục [src/services/](file:///d:/2SignBridgeApp/src/services/):
 
 ---
 
@@ -88,18 +88,7 @@ Quản lý thông báo đẩy (Push Notifications) cục bộ của thiết bị
 
 ---
 
-## 7. youtube.service.ts (Dịch vụ Tích hợp API YouTube)
-Tìm kiếm và hiển thị các video hướng dẫn học ASL trực quan từ nền tảng YouTube làm tư liệu tham khảo thêm cho học viên.
-
-*   **Truy vấn API YouTube Data v3 (`searchASLVideos`):**
-    *   Gửi yêu cầu GET HTTPS đến API của Google: `https://www.googleapis.com/youtube/v3/search`.
-    *   Sử dụng khóa API Key (`EXPO_PUBLIC_YT_API_KEY`) cấu hình trong file `.env`.
-    *   Lọc từ khóa tìm kiếm (mặc định kèm hậu tố `"ASL sign language"`) để chỉ hiển thị các video dạy ngôn ngữ ký hiệu chất lượng.
-    *   Trả về danh sách đối tượng chứa: `videoId` (để nhúng trình phát iframe `react-native-youtube-iframe`), tiêu đề video, ảnh thu nhỏ (thumbnail) và mô tả ngắn.
-
----
-
-## 8. admin.service.ts (Dịch vụ Quản trị viên)
+## 7. admin.service.ts (Dịch vụ Quản trị viên)
 Cung cấp các công cụ tương tác đặc quyền dành cho tài khoản có vai trò `ADMIN` quản lý dữ liệu ứng dụng.
 
 *   **Thêm/Sửa Lộ trình học (`createOrUpdatePath`):**
